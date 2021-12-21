@@ -1,0 +1,12 @@
+@import "Frame.scss";
+
+.ProjectsFrame {
+    min-height: 512px;
+    min-width: 800px;
+
+    .list {
+        width: 100%;
+        height: 100%;
+        background-color:white;
+    }
+}

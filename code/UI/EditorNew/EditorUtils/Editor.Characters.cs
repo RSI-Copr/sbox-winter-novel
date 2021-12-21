@@ -13,6 +13,7 @@ namespace TerryNovel.Editor
 		public readonly static CharacterHandler Characters = new();
 		public class CharacterHandler
 		{
+			private readonly Dictionary<int, string> CharactersDict = new();
 			private readonly Dictionary<CharacterNode,string> Dict = new();
 			private readonly List<CharacterPanel> Panels = new();
 			public void AddNode( CharacterNode node )

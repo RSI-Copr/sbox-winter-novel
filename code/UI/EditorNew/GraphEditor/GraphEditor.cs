@@ -7,30 +7,27 @@ using System.Linq;
 
 namespace TerryNovel.Editor
 {
-	public partial class GraphEditor:Panel
+	public partial class GraphEditor : Panel
 	{
-		private static Vector2 filedsize = new( 10000 );
+		private static Vector2 FieldSize = new( 10000 );
 		private const float GridSize = 16f;
 		private static GraphEditor Instance;
 		private static int CurNodeId = 0;
 		public GraphEditor()
 		{
+			Instance = this;
 			Style.SetBackgroundImage( "UI/background-grid.png" );
 			Style.PointerEvents = "all";
 			Style.Position = PositionMode.Absolute;
 
-			Style.Width = Length.Percent(filedsize.x);
-			Style.Height = Length.Percent( filedsize.y);
+			Style.Width = Length.Percent( FieldSize.x );
+			Style.Height = Length.Percent( FieldSize.y );
 
-			var pos = -filedsize / 2;
-			this.SetPosition( pos );
-			MouseMoveOffset = pos;
 			AcceptsFocus = true;
-			Focus();
 
-			CreateNode<StartNode>();
-			CreateNode<InfoNode>();
-			Instance = this;
+			Center();
+			CreateDefault();
+			Focus();
 		}
 
 
@@ -42,6 +39,12 @@ namespace TerryNovel.Editor
 			float half_size = rect_size / 2;
 			return FindInRect( new Rect( pos.x - half_size, pos.y - half_size, rect_size, rect_size ), full_inside );
 		}
+
+		private Vector2 GetRelativePosition(BaseNode node )
+		{
+			return node.GetPosition() - FieldSize/2;
+		}
+
 
 		private void ShowNodesCreation()
 		{
@@ -56,14 +59,35 @@ namespace TerryNovel.Editor
 
 			var node = Library.Create<BaseNode>( type );
 			AddNode( node );
-			node.SetPosition( MousePosition.SnapToGrid(GridSize) );
+			node.SetPosition( MousePosition.SnapToGrid( GridSize ) );
 		}
 		private void CreateNode<T>() where T : BaseNode
 		{
 			var node = Library.Create<T>();
 			AddNode( node );
-			node.SetPosition( filedsize/2 );
+			node.SetPosition( FieldSize / 2 );
 		}
+		private BaseNode CreateNode(string classname, int id, Vector2 relativepos )
+		{
+			var node = Library.Create<BaseNode>( classname );
+			AddChild( node );
+			Nodes.Add( node );
+
+			node.SetPosition( FieldSize / 2 + relativepos );
+			node.Id = id;
+
+			return node;
+		}
+
+		[ClientCmd("node_debug")]
+		private static void DebugNodes()
+		{
+			foreach(var node in Instance.Nodes )
+			{
+				Log.Info( $"{node} {node.BaseInput?.Id} {node.BaseOutput?.Id}" );
+			}
+		}
+
 		private void AddNode( BaseNode node )
 		{
 			node.Id = CurNodeId;
@@ -71,7 +95,38 @@ namespace TerryNovel.Editor
 			AddChild( node );
 			Nodes.Add( node );
 		}
+		private void CreateDefault()
+		{
+			CreateNode<InfoNode>();
+			CreateNode<StartNode>();
+		}
+		private void Center()
+		{
+			
+			this.SetPosition( -FieldSize / 2 + Screen.Size / 2 );
 
+		}
+
+		private void Clear()
+		{
+			foreach ( var node in Nodes )
+			{
+				node.Delete( true );
+
+			}
+			Nodes.Clear();
+			Connections.Clear();
+			CurNodeId = 0;
+			Plug.CurrentId = 0;
+			Center();
+		}
+
+		public static void Reset()
+		{
+			Plug.AutoIdAssignment = true;
+			Instance.Clear();
+			Instance.CreateDefault();
+		}
 
 		
 
@@ -234,7 +289,7 @@ namespace TerryNovel.Editor
 		{
 			if ( WantConnect )
 			{
-				DrawLine( CurPlug.GetScreenPosition(), Mouse.Position, FindPanelsUnderMouse().Any( p => p is PlugIn ) ? Color.Yellow : Color.Red );
+				Lines.DrawBroken( CurPlug.GetScreenPosition(), Mouse.Position, FindPanelsUnderMouse().Any( p => p is PlugIn ) ? Color.Yellow : Color.Red );
 			}
 
 			for ( int i = Connections.Count - 1; i >= 0; i-- )
@@ -246,31 +301,14 @@ namespace TerryNovel.Editor
 					continue;
 				}
 
-				DrawLine( con.Output.GetScreenPosition(), con.Input.GetScreenPosition(), con.Output.Color );
+				Lines.DrawBroken( con.Output.GetScreenPosition(), con.Input.GetScreenPosition(), con.Output.Color );
 			}
 
 			
 
 			base.DrawBackground( ref state );
 		}
-		private void DrawLine( Vector2 pos1, Vector2 pos2, Color col, float t = 10f )
-		{
-			float half_t = t / 2;
-
-			float x = 0, y = 0, w = 0, h = 0;
-
-			x = MathF.Min( pos1.x, pos2.x );
-			w = MathF.Abs( pos1.x - pos2.x );
-
-			y = MathF.Min( pos1.y, pos2.y );
-			h = MathF.Abs( pos1.y - pos2.y );
-
-			Render.UI.Box( new Rect( pos1.x + half_t, y + half_t, t, h + half_t ), col );
-			Render.UI.Box( new Rect( x + half_t, pos2.y + half_t, w + half_t, t ), col );
-
-
-
-		}
+		
 
 	}
 }

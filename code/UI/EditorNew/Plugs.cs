@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Sandbox;
 using Sandbox.UI;
 using Sandbox.UI.Construct;
@@ -7,12 +8,44 @@ namespace TerryNovel.Editor
 {
 	public class Plug : Panel
 	{
+		public static bool AutoIdAssignment { get; set; } = true;
+		public static int CurrentId { get; set; }
+
+		private readonly static Dictionary<int, Plug> Dict = new();
+
+		public static Plug GetById(int id )
+		{
+			return Dict.GetValueOrDefault( id );
+		}
+
+
+		public int Id { get; private set; }
+
+		public void SetId(int id )
+		{
+			Dict.Add( id, this );
+			Id = id;
+		}
+
 		public readonly BaseNode Node;
 		public Plug( BaseNode node)
 		{
+			if ( AutoIdAssignment )
+			{
+				SetId(CurrentId);
+				CurrentId++;
+			}
+
+			Log.Info( $"{this} {Id} {AutoIdAssignment}" );
+
 			Node = node;
 			AddClass( "plug" );
 			Add.Label( "navigate_next" );
+		}
+
+		public override void OnDeleted()
+		{
+			Dict.Remove( Id );
 		}
 	}
 
@@ -48,6 +81,6 @@ namespace TerryNovel.Editor
 		public PlugIn Input;
 		public PlugOut Output;
 
-		public bool IsValid => Input.Parent != null && Output.Parent != null;
+		public bool IsValid => Input.IsValid() && Output.IsValid();
 	}
 }

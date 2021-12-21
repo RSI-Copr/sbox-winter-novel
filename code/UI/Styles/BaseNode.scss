@@ -110,10 +110,17 @@
         position: absolute;
         width: 100px;
         left: -100px;
-        justify-content:center;
-        align-items:center;
+        justify-content: center;
+        align-items: center;
         font-size: 20px;
         background-color: rgba(grey,0.8);
         border: 1px solid black;
+    }
+
+    .dropdown {
+        .dropdown_indicator {
+            font-weight:500;
+            font-family: MaterialIcons;
+        }
     }
 }

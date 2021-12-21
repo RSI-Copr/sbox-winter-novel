@@ -12,11 +12,14 @@ namespace TerryNovel.Editor
 
 	public class BaseNode:Panel
 	{
+
+	
+
 		private readonly static Dictionary<string, Type> NodesNamesDict = new();
 		private readonly static Dictionary<Type, NodeAttribute> NodesDict = new();
 		public static IReadOnlyDictionary<string, Type> NodesNames => NodesNamesDict;
 
-		public int Id;
+		public int Id ;
 		
 		private Panel canvas;
 		protected Panel Canvas
@@ -39,7 +42,9 @@ namespace TerryNovel.Editor
 
 		}
 
-		public readonly PlugIn Input;
+		public readonly PlugIn BaseInput;
+		public readonly PlugOut BaseOutput;
+
 
 
 		private readonly List<PlugOut> Outputs;
@@ -64,10 +69,7 @@ namespace TerryNovel.Editor
 		}
 		
 
-		public virtual void Write(BinaryWriter writer )
-		{
-
-		}
+		
 
 		public BaseNode()
 		{
@@ -84,20 +86,22 @@ namespace TerryNovel.Editor
 			if( Attribute.HasInput )
 			{
 
-				Input = new PlugIn(this);
-				plug_canvas.AddChild( Input );
+				BaseInput = new PlugIn(this);
+				plug_canvas.AddChild( BaseInput );
 			}
 			if ( Attribute.HasOutput )
 			{
 				Outputs = new();
-				var output = new PlugOut( this );
-				AddOutput( output );
-				plug_canvas.AddChild( output );
+				BaseOutput = new PlugOut( this );
+				AddOutput( BaseOutput );
+				plug_canvas.AddChild( BaseOutput );
 			}
 			
 		}
-
 		
+
+
+
 
 		[Event.Hotload]
 		public static void Refill()
@@ -130,21 +134,23 @@ namespace TerryNovel.Editor
 
 			if ( e.Button == "mouseright" && Attribute.CanCreate )
 			{
-				Edit();
+				var options = new OptionsPanel();
+				OnEdit( options, e.Target );
+
+				options.AddOption( "Delete", () => Delete() );
 			}
 		}
-		public void Edit()
+		
+
+		
+		protected virtual void OnEdit( OptionsPanel options, Panel target )
 		{
-			var ops = new OptionsPanel();
-			ops.AddOption( "Delete", () => Delete() );
-			
-			
+		
 		}
+		public virtual void Read(BinaryReader reader ) { }
+		public virtual void Write( BinaryWriter writer ) { }
 
-		
 
-	
-		
 	}
 
 	[AttributeUsage(AttributeTargets.Class)]

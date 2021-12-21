@@ -30,7 +30,7 @@ namespace TerryNovel
 			if ( e.Button == "escape" ) this.SetVisible(!IsVisible);
 		}
 
-		private static BaseFileSystem FS => FileSystem.Data;
+		public static BaseFileSystem FS => FileSystem.Data;
 
 		public static void CreateDir()
 		{

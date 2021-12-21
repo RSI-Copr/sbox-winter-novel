@@ -11,7 +11,9 @@ public static class UIExt
 
 	public static void LoadDefaultStyleSheet( this Panel pnl )
 	{
-		pnl.LoadStyleSheet( pnl.GetType().Name );
+		var name = pnl.GetType().Name;
+		pnl.LoadStyleSheet( name );
+		pnl.AddClass( name );
 	}
 	public static void LoadStyleSheet( this Panel pnl, string name )
 	{
@@ -40,6 +42,11 @@ public static class UIExt
 		control.Placeholder = text;
 
 		return control;
+	}
+
+	public static bool IsValid(this Panel pnl )
+	{
+		return pnl.Parent != null;
 	}
 }
 

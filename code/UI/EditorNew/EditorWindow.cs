@@ -38,12 +38,16 @@ namespace TerryNovel.Editor
 			}
 		}
 
-		
+		[ContextButton( "File", "New" )]
+		public static void CreateNew()
+		{
+			GraphEditor.Reset();
+		}
 
 		[ContextButton( "File", "Open" )]
 		public static void OpenFile()
 		{
-
+			ProjectsFrame.Open();
 		}
 		[ContextButton( "File", "Save" )]
 		public static void SaveToFile()
@@ -54,16 +58,11 @@ namespace TerryNovel.Editor
 		[ContextButton( "File", "Close" )]
 		public static void CloseEditor()
 		{
-			Close();
+			Instance.Blur();
+			Instance.Delete();
+			Instance = null;
 		}
-
-		[ClientCmd( "noveleditor_toggle" )]
-		public static void Toggle()
-		{
-			Instance?.SetVisible( !Instance.IsVisible );
-
-		}
-
+		
 		public static void Open()
 		{
 			if(Instance == null )

@@ -9,7 +9,7 @@ namespace TerryNovel.Editor
 {
 	static class Lines
 	{
-		public static void DrawStraight( Vector2 pos1, Vector2 pos2, Color col, float t = 10f )
+		public static void DrawBroken( Vector2 pos1, Vector2 pos2, Color col, float t = 10f )
 		{
 			float half_t = t / 2;
 

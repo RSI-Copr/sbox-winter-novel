@@ -27,5 +27,7 @@ namespace TerryNovel.Editor
 		{
 			Editor.Characters.Remove( this );
 		}
+
+		
 	}
 }
