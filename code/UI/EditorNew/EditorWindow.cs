@@ -55,6 +55,12 @@ namespace TerryNovel.Editor
 			GraphEditor.GenerateSaveFile();
 		}
 
+		[ContextButton( "File", "Run" )]
+		public static void Run()
+		{
+			GraphEditor.RunNovelFromEditor();
+		}
+
 		[ContextButton( "File", "Close" )]
 		public static void CloseEditor()
 		{

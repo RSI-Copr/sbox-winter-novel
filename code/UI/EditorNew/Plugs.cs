@@ -63,6 +63,7 @@ namespace TerryNovel.Editor
 	}
 	public class PlugOut : Plug
 	{
+		public readonly List<PlugIn> NextNodes = new();
 		public readonly Color Color;
 		private Color GenerateRandomColor()
 		{
@@ -78,6 +79,24 @@ namespace TerryNovel.Editor
 
 	class Connection
 	{
+		public static readonly List<Connection> All = new();
+		public static Connection Create(PlugOut output, PlugIn input )
+		{
+			output.NextNodes.Add( input );
+
+			var conn =  new Connection()
+			{
+				Output = output,
+				Input = input,
+			};
+
+			All.Add( conn );
+
+			return conn;
+		}
+
+		
+
 		public PlugIn Input;
 		public PlugOut Output;
 

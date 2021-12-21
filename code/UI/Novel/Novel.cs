@@ -9,7 +9,7 @@ using Sandbox.UI.Construct;
 
 namespace TerryNovel
 {
-	public class Novel:Panel
+	public partial class Novel:Panel
 	{
 		public const string Directory = "novels";
 		private static Novel Instance;
@@ -18,7 +18,10 @@ namespace TerryNovel
 		{
 			Instance = this;
 			this.LoadDefaultStyleSheet();
-			Canvas = AddChild<TextCanvas>();
+
+			
+
+			Canvas = Add.Panel("canvas").AddChild<TextCanvas>();
 			AcceptsFocus = true;
 			Focus();
 

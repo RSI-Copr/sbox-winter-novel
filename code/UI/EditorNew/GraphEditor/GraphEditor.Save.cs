@@ -31,7 +31,8 @@ namespace TerryNovel.Editor
 
 		private void Save()
 		{
-			var info = GetNodeById( 0 ) as InfoNode;
+			var info = GetInfoNode();
+			Log.Info( info );
 			if(string.IsNullOrWhiteSpace( info.Title ) )
 			{
 				ShowError( "Novel must have name!" );
@@ -48,9 +49,9 @@ namespace TerryNovel.Editor
 			using var filestream = FS.OpenWrite( $"{dir}//.novel_project" );
 			using var writer = new BinaryWriter( filestream );
 
-			writer.Write( Nodes.Count );
+			writer.Write( BaseNode.All.Count );
 
-			foreach(var node in Nodes )
+			foreach(var node in BaseNode.All )
 			{
 				writer.Write( node.Id );
 				writer.Write( node.GetType().Name );
@@ -77,8 +78,8 @@ namespace TerryNovel.Editor
 				node.Write( writer );
 			}
 
-			writer.Write( Connections.Count );
-			foreach ( var con in Connections ) 
+			writer.Write( Connection.All.Count );
+			foreach ( var con in Connection.All ) 
 			{
 				writer.Write( con.Output.Id );
 				writer.Write( con.Input.Id );
@@ -103,7 +104,7 @@ namespace TerryNovel.Editor
 
 			Clear();
 			Plug.AutoIdAssignment = false;
-			
+			BaseNode.AutoIdAssignment = false;
 
 			using var filestream = FS.OpenRead( file );
 			using var reader = new BinaryReader( filestream );
@@ -141,11 +142,8 @@ namespace TerryNovel.Editor
 
 				if(output != null && input != null )
 				{
-					Connections.Add( new Connection()
-					{
-						Output = output,
-						Input = input,
-					} ); ;
+					Connection.Create( output, input );
+					
 				}
 
 			}
@@ -154,6 +152,7 @@ namespace TerryNovel.Editor
 			filestream.Close();
 
 			Plug.AutoIdAssignment = true;
+			BaseNode.AutoIdAssignment = true;
 		}
 
 		private void ShowError(string error)

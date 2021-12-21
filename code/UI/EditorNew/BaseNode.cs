@@ -12,14 +12,18 @@ namespace TerryNovel.Editor
 
 	public class BaseNode:Panel
 	{
+		public static bool AutoIdAssignment { get; set; } = true;
+		public static int CurrentId { get; set; }
+		public static readonly List<BaseNode> All = new();
+		public static BaseNode GetNodeById( int id ) => All.FirstOrDefault( n => n.Id == id );
 
-	
+
 
 		private readonly static Dictionary<string, Type> NodesNamesDict = new();
 		private readonly static Dictionary<Type, NodeAttribute> NodesDict = new();
 		public static IReadOnlyDictionary<string, Type> NodesNames => NodesNamesDict;
 
-		public int Id ;
+		public int Id;
 		
 		private Panel canvas;
 		protected Panel Canvas
@@ -60,11 +64,14 @@ namespace TerryNovel.Editor
 		{
 			get
 			{
-				foreach(var ouput in Outputs )
+				if ( Outputs == null ) yield break;
+			    foreach(var o in Outputs )
 				{
-					
+					foreach(var o2 in o.NextNodes )
+					{
+						yield return o2.Node;
+					}
 				}
-				return null;
 			}
 		}
 		
@@ -96,7 +103,13 @@ namespace TerryNovel.Editor
 				AddOutput( BaseOutput );
 				plug_canvas.AddChild( BaseOutput );
 			}
-			
+
+			All.Add( this );
+			if ( AutoIdAssignment )
+			{
+				Id = CurrentId;
+				CurrentId++;
+			}
 		}
 		
 

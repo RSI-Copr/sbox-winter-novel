@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace novel.UI.EditorNew.EditorUtils
+namespace TerryNovel.Editor
 {
-	internal class Editor
+	partial class Editor
 	{
+
 	}
 }

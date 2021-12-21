@@ -25,14 +25,14 @@ namespace TerryNovel.Editor
 
 			AcceptsFocus = true;
 
-			Center();
+			Clear();
 			CreateDefault();
 			Focus();
 		}
 
 
 		private List<BaseNode> Nodes = new();
-		private List<Connection> Connections = new();
+		
 		private IEnumerable<Panel> FindPanelsUnderMouse( float rect_size = 10, bool full_inside = false )
 		{
 			var pos = Mouse.Position;
@@ -71,8 +71,7 @@ namespace TerryNovel.Editor
 		{
 			var node = Library.Create<BaseNode>( classname );
 			AddChild( node );
-			Nodes.Add( node );
-
+			
 			node.SetPosition( FieldSize / 2 + relativepos );
 			node.Id = id;
 
@@ -82,18 +81,15 @@ namespace TerryNovel.Editor
 		[ClientCmd("node_debug")]
 		private static void DebugNodes()
 		{
-			foreach(var node in Instance.Nodes )
+			foreach(var node in BaseNode.All )
 			{
-				Log.Info( $"{node} {node.BaseInput?.Id} {node.BaseOutput?.Id}" );
+				Log.Info( $"{node} {node.Id}" );
 			}
 		}
 
 		private void AddNode( BaseNode node )
 		{
-			node.Id = CurNodeId;
-			CurNodeId++;
 			AddChild( node );
-			Nodes.Add( node );
 		}
 		private void CreateDefault()
 		{
@@ -109,21 +105,25 @@ namespace TerryNovel.Editor
 
 		private void Clear()
 		{
-			foreach ( var node in Nodes )
+			foreach ( var node in BaseNode.All )
 			{
 				node.Delete( true );
-
 			}
-			Nodes.Clear();
-			Connections.Clear();
-			CurNodeId = 0;
+
+			BaseNode.All.Clear();
+			Connection.All.Clear();
+
+			BaseNode.AutoIdAssignment = true;
+			BaseNode.CurrentId = 0;
+
 			Plug.CurrentId = 0;
+			Plug.AutoIdAssignment = true;
 			Center();
 		}
 
 		public static void Reset()
 		{
-			Plug.AutoIdAssignment = true;
+			
 			Instance.Clear();
 			Instance.CreateDefault();
 		}
@@ -186,7 +186,7 @@ namespace TerryNovel.Editor
 			FieldMoving = value;
 		}
 
-		public BaseNode GetNodeById( int id ) => Nodes.FirstOrDefault( n => n.Id == id );
+		
 
 
 		private Vector2 NodeMoveOffset;
@@ -256,14 +256,7 @@ namespace TerryNovel.Editor
 		private void ConnectTo( PlugIn input )
 		{
 			if ( CurPlug.Node == input.Node ) return;
-
-			var conn = new Connection()
-			{
-				Output = CurPlug,
-				Input = input,
-			};
-
-			Connections.Add( conn );
+			Connection.Create(CurPlug,input);
 		}
 
 	
@@ -292,12 +285,12 @@ namespace TerryNovel.Editor
 				Lines.DrawBroken( CurPlug.GetScreenPosition(), Mouse.Position, FindPanelsUnderMouse().Any( p => p is PlugIn ) ? Color.Yellow : Color.Red );
 			}
 
-			for ( int i = Connections.Count - 1; i >= 0; i-- )
+			for ( int i = Connection.All.Count - 1; i >= 0; i-- )
 			{
-				var con = Connections[i];
+				var con = Connection.All[i];
 				if ( !con.IsValid )
 				{
-					Connections.Remove( con );
+					Connection.All.Remove( con );
 					continue;
 				}
 

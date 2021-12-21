@@ -23,7 +23,12 @@ namespace TerryNovel.Editor
 			{
 				if ( !Novel.FS.DirectoryExists( dir ) ) return;
 
-				foreach(var file in Novel.FS.FindFile( dir, "*.png" ) )
+				fileWatch = Novel.FS.Watch( dir );
+				fileWatch.OnChangedFile += OnFileChanged;
+				fileWatch.OnChanges += OnChanged;
+			
+
+				foreach (var file in Novel.FS.FindFile( dir, "*.png" ) )
 				{
 					Files.Add( file );
 				}
@@ -34,6 +39,15 @@ namespace TerryNovel.Editor
 				return Files.OrderBy(f=>f);
 			}
 
+			public void OnChanged(FileWatch watch)
+			{
+				Log.Info( watch.watchFiles );
+			}
+
+			public void OnFileChanged(string file )
+			{
+				Log.Info( file );
+			}
 		}
 
 		
