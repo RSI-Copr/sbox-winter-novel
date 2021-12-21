@@ -1,0 +1,119 @@
+.node {
+    position: absolute;
+    width: 512px;
+    min-height: 32px;
+    background-color: rgba(grey,0.8);
+    border: 1px solid black;
+    border-radius: 5px;
+    flex-direction: column;
+    color: white;
+    box-shadow: 3px 3px 3px rgba(black,0.5);
+
+    .plugs {
+        position: absolute;
+        width: 100%;
+        align-items: center;
+        background-color: green;
+
+
+        .input {
+            top: 4px;
+            position: absolute;
+            left: 4px;
+        }
+
+        .output {
+            top: 4px;
+            position: absolute;
+            right: 4px;
+        }
+    }
+
+    .canvas {
+        width: 100%;
+        flex-direction: column;
+        padding: 3px;
+    }
+
+    .title {
+        width: 100%;
+        font-size: 25px;
+        text-align: center;
+        pointer-events: none;
+        text-shadow: 1px 1px 1px black;
+    }
+
+    .plug {
+        width: 20px;
+        height: 20px;
+        border-radius: 100%;
+        font-family: MaterialIcons;
+        align-items: center;
+
+        label {
+            font-size: 20px;
+            font-weight: bold;
+            pointer-events: none;
+        }
+
+        &.input {
+            background-color: red;
+        }
+
+        &.output {
+            background-color: forestgreen;
+            cursor: pointer;
+        }
+    }
+
+    .message {
+        width: 100%;
+    }
+
+    .textentry {
+        background-color: rgba(white,0.5);
+        color: black;
+        border: 1px solid black;
+        font-weight: bolder;
+        font-size: 20px;
+        width: 100%;
+
+        .placeholder {
+            color: gray;
+            pointer-events: none;
+            display: none;
+        }
+
+        &.has-placeholder {
+
+            .placeholder {
+                display: flex;
+            }
+        }
+    }
+
+    .plus {
+        cursor: pointer;
+        font-family: MaterialIcons;
+        width: 100%;
+        font-size: 25px;
+        justify-content: center;
+    }
+
+    .characterselect {
+        cursor: pointer;
+        font-family: MaterialIcons;
+        font-size: 25px;
+    }
+
+    .character {
+        position: absolute;
+        width: 100px;
+        left: -100px;
+        justify-content:center;
+        align-items:center;
+        font-size: 20px;
+        background-color: rgba(grey,0.8);
+        border: 1px solid black;
+    }
+}

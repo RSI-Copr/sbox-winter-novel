@@ -1,0 +1,46 @@
+OptionsPanel {
+    background-color: gray;
+    color: white;
+    position: absolute;
+    flex-direction: column;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border: 1px solid black;
+    transition: all 0.2s ease-out;
+    border-radius: 5%;
+
+    button {
+        font-size: 25px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: dimgray;
+        }
+
+        label {
+            padding: 5px;
+        }
+    }
+}
+
+
+Popup {
+    background-color: dimgray;
+    flex-direction: column;
+    min-width: 100px;
+    box-shadow: 3px 5px 5px black;
+    color: white;
+    font-size: 15px;
+    position: absolute;
+    font-weight:bolder;
+    button {
+
+        &:hover {
+            background-color: #393939;
+        }
+
+        label {
+            margin: 2px;
+        }
+    }
+}

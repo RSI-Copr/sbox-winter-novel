@@ -1,0 +1,15 @@
+MainMenu
+{
+    position:absolute;
+    width:100%;
+    height:100%;
+    background-color:white;
+    flex-direction:column;
+
+    button{
+        width:100px;
+        height:20px;
+        cursor:pointer;
+        border:1px solid black;
+    }
+}
