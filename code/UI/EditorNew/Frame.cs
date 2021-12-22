@@ -58,5 +58,10 @@ namespace TerryNovel.Editor
 				this.SetPosition( MouseMoveOffset );
 			}
 		}
+
+		public static void Show<T>(bool instance = false ) where T:Frame,new()
+		{
+			_ = new T();
+		}
 	}
 }

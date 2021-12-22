@@ -9,86 +9,201 @@ using Sandbox.UI.Construct;
 
 namespace TerryNovel
 {
-	public partial class Novel:Panel
+	public partial class Novel : Panel
 	{
 		public const string Directory = "novels";
-		private static Novel Instance;
-		private TextCanvas Canvas;
-		public  Novel()
+		public static BaseFileSystem FS => FileSystem.Data;
+
+		public static Novel RootPanel { get; private set; }
+		public static NovelInfo Info { get; private set; }
+		
+		public static string FolderName { get; set; }
+
+		public static int CurrentMessageId { get; set; } = 0;
+		private static Message CurrentMessage;
+
+
+		private static TextCanvas Canvas;
+		private static AnswersCanvas Answers;
+		private static CharacterInfo Character;
+
+
+
+		public Novel()
 		{
-			Instance = this;
+			RootPanel = this;
 			this.LoadDefaultStyleSheet();
 
-			
+			Answers = AddChild<AnswersCanvas>();
 
-			Canvas = Add.Panel("canvas").AddChild<TextCanvas>();
+			Character = Add.Panel( "character-canvas" ).AddChild<CharacterInfo>();
+			Canvas = Add.Panel( "canvas" ).AddChild<TextCanvas>();
+			
+			Canvas.OnTextShown = OnTextComplete;
+
 			AcceptsFocus = true;
 			Focus();
-
 		}
 
+		protected override void OnClick( MousePanelEvent e )
+		{
+			if ( Canvas.IsTyping )
+			{
+				Canvas.SpeedRun();
+				return;
+			}
+
+			if(CurrentMessage?.HasAnswers ?? false)
+			{
+				return;
+			}
+
+			ShowMessage();
+		}
 		public override void OnButtonEvent( ButtonEvent e )
 		{
 			base.OnButtonEvent( e );
-			if ( e.Button == "escape" ) this.SetVisible(!IsVisible);
+			if ( e.Button == "escape" ) this.SetVisible( false );
 		}
 
-		public static BaseFileSystem FS => FileSystem.Data;
+
+
+		public static void Start( NovelInfo info )
+		{
+			if ( RootPanel == null )
+			{
+				RootPanel = new();
+			}
+			RootPanel.SetVisible( true );
+			Info = info;
+			info.RunEvents();
+			CurrentMessageId = 0;
+			ShowMessage();
+		}
+		private static void ShowMessage()
+		{
+			if ( CurrentMessageId == -1 )
+			{
+				RootPanel.SetVisible( false );
+				return;
+			}
+
+
+
+			var msg = Info.Messages[CurrentMessageId];
+			CurrentMessage = msg;
+			Canvas.Print( msg.Text );
+			Answers.Clear();
+			Info.RunMessageEvents( msg );
+			Character.Set( msg.Character );
+
+			CurrentMessageId = msg.NextMessage;
+			Log.Info( CurrentMessageId );
+		}
+
+
+		private static void OnTextComplete()
+		{
+			if( CurrentMessage?.HasAnswers ?? false )
+			{
+				Answers.SetFrom( CurrentMessage );
+			}
+		}
+		public static void SetBackground( string image )
+		{
+		
+			//Texture.CreateArray().Finish( data: FS.ReadAllBytes( $"novels/{FolderName}/backgrounds/{image}" ).ToArray() );
+			RootPanel.Style.SetBackgroundImage($"backgrounds/{image}");
+		}
+		public static void SetText( string name )
+		{
+			Canvas.Print( name );
+		}
+
 
 		public static void CreateDir()
 		{
 			FS.CreateDirectory( Directory );
 		}
-		[ClientCmd]
 		public static void FindAll()
 		{
-			foreach(var dir in FS.FindDirectory( Directory ) )
+			foreach ( var dir in FS.FindDirectory( Directory ) )
 			{
 				var filename = FS.FindFile( $"{Directory}\\{dir}", "*.novel" ).FirstOrDefault();
 				if ( filename == null ) continue;
 				LoadFromFile( $"{Directory}\\{dir}\\{filename}" );
 			}
 		}
-
-		public static void LoadFromFile(string filename )
+		public static void LoadFromFile( string filename )
 		{
 
 		}
 
-
-		public static void SetBackground( string image )
+	    class CharacterInfo : Panel
 		{
-			Instance.Style.SetBackgroundImage( image );
+			private Label Label;
+
+			public CharacterInfo()
+			{
+				Label = Add.Label();
+			}
+			public void Set(int id )
+			{
+				if(id == -1 )
+				{
+					this.SetVisible( false );
+					Canvas.Style.BorderTopLeftRadius = Length.Pixels( 25 );
+					
+				}
+				else
+				{
+					Label.Text = Info.Characters[id];
+					Canvas.Style.BorderTopLeftRadius = 0;
+				}
+				
+			}
 		}
-
-
-		[ClientCmd]
-		public static void SetText( string name )
+		
+		class AnswersCanvas:Panel
 		{
-			Instance.Canvas.SetText( name );
+			public void Clear()
+			{
+				DeleteChildren( true );
+				Style.Opacity = 0;
+			}
+
+			public void SetFrom( Message msg )
+			{
+				foreach ( var ans in msg.Answers ) {
+					Add.Button( ans.Text , () =>
+					{
+						CurrentMessageId = ans.NextMessage;
+						ShowMessage();
+						Info.RunAnswerEvents(ans);
+					} );
+				}
+				Style.Opacity = 1;
+			}
 		}
-
-
-		public static void Load(string name )
-		{
-			Instance.SetVisible( true );
-
-		}
-
+		
 		class TextCanvas : Panel
 		{
 			public const float Speed = 0.05f;
 			public readonly Label Label;
+
 			private string buffer;
 			private RealTimeSince LastCharAdd;
 			private int CurChar;
+
+			public bool IsTyping => Label.Text.Length < buffer.Length;
+			public Action OnTextShown { get; set; }
 
 			public TextCanvas()
 			{
 				Label = AddChild<Label>();
 			}
 
-			public void SetText(string text)
+			public void Print(string text)
 			{
 				buffer = text;
 				LastCharAdd = 0;
@@ -96,13 +211,24 @@ namespace TerryNovel
 				Label.Text = "";
 			}
 
+			public void SpeedRun()
+			{
+				Label.Text = buffer;
+				OnTextShown?.Invoke();
+			}
+
 			public override void Tick()
 			{
-			    if( buffer != null && CurChar < buffer.Length && LastCharAdd >= Speed )
+				if ( buffer != null && IsTyping && LastCharAdd >= Speed )
 				{
 					LastCharAdd = 0;
 					Label.Text += buffer[CurChar];
 					CurChar++;
+
+					if ( !IsTyping )
+					{
+						OnTextShown?.Invoke();
+					}
 				}
 			}
 		}

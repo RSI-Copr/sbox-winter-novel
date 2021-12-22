@@ -5,13 +5,23 @@ using TerryNovel.Editor;
 
 namespace TerryNovel
 {
+	[UseTemplate]
 	public class MainMenu:Panel
 	{
 		public MainMenu()
 		{
-			this.LoadDefaultStyleSheet();
-			Add.Button( "Start novel", () => Novel.Load("") );
-			Add.Button( "Create own story", () => EditorWindow.Open() ); ;
+			
+
+			
+		}
+
+		public void ShowEditor()
+		{
+			EditorWindow.Open();
+		}
+		public void Exit()
+		{
+			Local.Client.Kick();
 		}
 	}
 }

@@ -11,8 +11,9 @@ namespace TerryNovel.Editor
 	{
 		private static Vector2 FieldSize = new( 10000 );
 		private const float GridSize = 16f;
-		private static GraphEditor Instance;
-		private static int CurNodeId = 0;
+
+		public static GraphEditor Instance { get; private set; }
+	
 		public GraphEditor()
 		{
 			Instance = this;
@@ -26,7 +27,7 @@ namespace TerryNovel.Editor
 			AcceptsFocus = true;
 
 			Clear();
-			CreateDefault();
+			//CreateDefault();
 			Focus();
 		}
 
@@ -58,13 +59,13 @@ namespace TerryNovel.Editor
 		{
 
 			var node = Library.Create<BaseNode>( type );
-			AddNode( node );
+			AddChild( node );
 			node.SetPosition( MousePosition.SnapToGrid( GridSize ) );
 		}
 		private void CreateNode<T>() where T : BaseNode
 		{
 			var node = Library.Create<T>();
-			AddNode( node );
+			AddChild( node );
 			node.SetPosition( FieldSize / 2 );
 		}
 		private BaseNode CreateNode(string classname, int id, Vector2 relativepos )
@@ -73,7 +74,7 @@ namespace TerryNovel.Editor
 			AddChild( node );
 			
 			node.SetPosition( FieldSize / 2 + relativepos );
-			node.Id = id;
+			//node.Id = id;
 
 			return node;
 		}
@@ -86,11 +87,7 @@ namespace TerryNovel.Editor
 				Log.Info( $"{node} {node.Id}" );
 			}
 		}
-
-		private void AddNode( BaseNode node )
-		{
-			AddChild( node );
-		}
+		
 		private void CreateDefault()
 		{
 			CreateNode<InfoNode>();
@@ -105,31 +102,32 @@ namespace TerryNovel.Editor
 
 		private void Clear()
 		{
-			foreach ( var node in BaseNode.All )
+			for (int i = BaseNode.All.Count -1; i>= 0;i-- )
 			{
-				node.Delete( true );
+				BaseNode.All[i].Delete( true );
 			}
-
+			 
 			BaseNode.All.Clear();
 			Connection.All.Clear();
+			
 
 			BaseNode.AutoIdAssignment = true;
 			BaseNode.CurrentId = 0;
 
+			Plug.Clear();
 			Plug.CurrentId = 0;
 			Plug.AutoIdAssignment = true;
+			Editor.Characters.Clear();
+
 			Center();
 		}
 
 		public static void Reset()
 		{
-			
 			Instance.Clear();
 			Instance.CreateDefault();
 		}
-
 		
-
 		private Vector2 MoveDir = 0;
 		
 		private void AddDirection(Vector2 dir, bool pressed )
@@ -285,20 +283,11 @@ namespace TerryNovel.Editor
 				Lines.DrawBroken( CurPlug.GetScreenPosition(), Mouse.Position, FindPanelsUnderMouse().Any( p => p is PlugIn ) ? Color.Yellow : Color.Red );
 			}
 
-			for ( int i = Connection.All.Count - 1; i >= 0; i-- )
+			foreach ( var con in Connection.All )
 			{
-				var con = Connection.All[i];
-				if ( !con.IsValid )
-				{
-					Connection.All.Remove( con );
-					continue;
-				}
-
 				Lines.DrawBroken( con.Output.GetScreenPosition(), con.Input.GetScreenPosition(), con.Output.Color );
 			}
-
 			
-
 			base.DrawBackground( ref state );
 		}
 		

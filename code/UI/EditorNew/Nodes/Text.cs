@@ -5,17 +5,22 @@ using System.Collections.Generic;
 
 namespace TerryNovel.Editor
 {
-	[Node( Title = "Message" )]
+	[Node( Title = "Message" , HasOutput = false)]
 	public class MessageNode : BaseNode
 	{
-		private readonly List<MessageEntry> Messages = new();
+		public readonly List<MessageEntry> Messages = new();
 
 		public class MessageEntry:Panel{
 
 			public readonly PlugOut Output;
-			public CharacterPanel Character;
+			public string Character;
+
+			public int CharacterId = -1;
+
+			private readonly MessageNode Node;
 			private TextEntry textEntry;
-			
+			private CharacterPanel characterPanel;
+
 			public string Text
 			{
 				get => textEntry.Text;
@@ -23,7 +28,7 @@ namespace TerryNovel.Editor
 			}
 
 
-			public MessageEntry(BaseNode node)
+			public MessageEntry( MessageNode node )
 			{
 				AddClass( "message" );
 				Add.Button( "face", "characterselect", OpenСharacterSelector );
@@ -31,7 +36,7 @@ namespace TerryNovel.Editor
 				textEntry = Add.TextEntry( "" );
 				textEntry.Multiline = true;
 
-
+				Node = node;
 				Output = new PlugOut( node );
 				AddChild( Output );
 			}
@@ -39,6 +44,7 @@ namespace TerryNovel.Editor
 			private void OpenСharacterSelector()
 			{
 				var ch = Editor.Characters.Get();
+
 				if ( ch.Count == 0 ) return;
 				var popup = new Popup( this, Popup.PositionMode.BelowLeft, 0 );
 				foreach(var kv in ch )
@@ -47,24 +53,27 @@ namespace TerryNovel.Editor
 				}
 			}
 
-			private void SelectCharacter( CharacterNode node)
+			public void SelectCharacter( int id )
 			{
-				if( Character == null || Character.Parent == null )
+				if ( id == -1 ) return;
+				CharacterId = id;
+				if( characterPanel == null || !characterPanel.IsValid() )
 				{
-					Character = new CharacterPanel( node );
-					AddChild( Character );
+					characterPanel = new CharacterPanel( id );
+					AddChild( characterPanel );
 				}
 				else
 				{
-					Character.UpdateFrom( node );
+					characterPanel.UpdateFrom( id );
 				}
 			}
 
-			private void SetCharacter(int id)
-			{
-
-			}
 			
+			
+
+			public bool IsLast => Node.Messages.IndexOf( this ) == Node.Messages.Count - 1;
+			public bool IsFirst => Node.Messages.IndexOf( this ) == 0;
+
 		}
 
 		
@@ -103,10 +112,22 @@ namespace TerryNovel.Editor
 
 		protected override void OnEdit( OptionsPanel options, Panel target )
 		{
-			if(target is MessageEntry msg )
+			if(target is CharacterPanel ch )
 			{
-				options.AddOption( $"Delete line {msg.Text.Substring( 0, 5 )}..." ,()=> RemoveLine( msg ) );
+				options.AddOption( "Detach character", () =>
+				 {
+					 ((MessageEntry)ch.Parent).CharacterId = -1;
+					 ch.Delete();
+				 });
 			}
+
+			var msg = target as MessageEntry ?? target.Parent as MessageEntry ?? target.Parent?.Parent?.Parent as MessageEntry;
+			if ( msg == null ) return;
+			if(msg.IsFirst ) return;
+
+			var text = msg.Text;
+			options.AddOption( $"Delete line: {(text.Length > 8 ? text[..5] + "..." : text)}" ,()=> RemoveLine( msg ) );
+			
 		}
 
 		public override void Read( BinaryReader reader )
@@ -118,6 +139,7 @@ namespace TerryNovel.Editor
 				var msg = AddLine();
 				msg.Text = reader.ReadString();
 				msg.Output.SetId( reader.ReadInt32() );
+				msg.CharacterId = reader.ReadInt32();
 			}
 		}
 
@@ -128,15 +150,137 @@ namespace TerryNovel.Editor
 			{
 				writer.Write( entry.Text );
 				writer.Write( entry.Output.Id );
+				writer.Write( entry.CharacterId );
 			}
 		}
-	}
 
-	
+		public override void OnPostLoad()
+		{
+			foreach(var msg in Messages )
+			{
+				msg.SelectCharacter( msg.CharacterId );
+			}
+		}
+
+		
+	}
 
 	[Node( Title = "Answer" )]
 	public class AnswerNode : BaseNode
 	{
+		private const int MaxAnswers = 4;
+		public readonly List<AnswerEntry> Answers = new();
+
+		private Button Button;
+
+		public class AnswerEntry : Panel
+		{
+
+			public readonly PlugOut Output;
+			private readonly AnswerNode Node;
+
+			private TextEntry textEntry;
+			public string Text
+			{
+				get => textEntry.Text;
+				set => textEntry.Text = value;
+			}
+
+
+			public AnswerEntry( BaseNode node )
+			{
+				AddClass( "message" );
+				
+				textEntry = Add.TextEntry( "" );
+				textEntry.Multiline = true;
+				
+				Output = new PlugOut( node );
+				AddChild( Output );
+			}
+		}
+
+		public AnswerNode()
+		{
+			AddLine();
+			Button = Add.Button( "add", "plus", () => AddLine() );
+		}
+
+
+		private void ClearLines()
+		{
+			foreach ( var ans in Answers )
+			{
+				ans.Delete();
+			}
+
+			Answers.Clear();
+
+
+			Button.SetVisible( false );
+		}
+
+
+
+		private AnswerEntry AddLine()
+		{
+			var msg = new AnswerEntry( this );
+			Answers.Add( msg );
+			Canvas.AddChild( msg );
+
+			if( Answers.Count >= MaxAnswers )
+			{
+				Button.SetVisible( false );
+			}
+
+			return msg;
+		}
+
+		private void RemoveLine( AnswerEntry entry )
+		{
+			Answers.Remove( entry );
+			entry.Delete(true);
+
+			if ( Answers.Count < MaxAnswers )
+			{
+				Button.SetVisible( true );
+			}
+		}
+
+		protected override void OnEdit( OptionsPanel options, Panel target )
+		{
+			var msg = target as AnswerEntry ?? target.Parent as AnswerEntry ?? target.Parent?.Parent?.Parent as AnswerEntry;
+			if ( msg == null ) return;
+			if ( Answers.IndexOf(msg) == 0 ) return;
+
+			var text = msg.Text;
+			options.AddOption( $"Delete line {(text.Length > 8 ? text[..5] + "..." : text)}", () => RemoveLine( msg ) );
+
+		}
+		
+
+		public override void Read( BinaryReader reader )
+		{
+			ClearLines();
+			int msg_count = reader.ReadInt32();
+			for ( int i = 0; i < msg_count; i++ )
+			{
+				var msg = AddLine();
+				msg.Text = reader.ReadString();
+				msg.Output.SetId( reader.ReadInt32() );
+			}
+		}
+
+		public override void Write( BinaryWriter writer )
+		{
+			writer.Write( Answers.Count );
+			foreach ( var entry in Answers )
+			{
+				writer.Write( entry.Text );
+				writer.Write( entry.Output.Id );
+			}
+		}
+
+
 	}
 
 	[Node( Title = "Commentary",HasInput = false, HasOutput = false )]

@@ -11,42 +11,26 @@ namespace TerryNovel.Editor
 	partial class GraphEditor
 	{
 		private static BaseFileSystem FS => Novel.FS;
-		public static void GenerateSaveFile()
-		{
-			Instance.Save();
-		}
+		
 
 		public static void LoadFromFile(string name )
 		{
 			Instance.Load( name );
 		}
 
-		
 
-		private bool CheckForValid()
-		{
 
-			return true;
-		}
-
-		private void Save()
+		public void GenerateSaveFile()
 		{
 			var info = GetInfoNode();
-			Log.Info( info );
+			
 			if(string.IsNullOrWhiteSpace( info.Title ) )
 			{
 				ShowError( "Novel must have name!" );
 				return;
 			}
-			var dir = $"{ Novel.Directory}//{info.Title.ToLower().Replace(' ','_')}";
-		
-			FS.CreateDirectory( dir );
-			FS.CreateDirectory( $"{dir}//backgrounds" );
-			FS.CreateDirectory( $"{dir}//sounds" );
 
-			Editor.Backgrounds.TryStartWathForDir( $"{dir}//backgrounds" );
-
-			using var filestream = FS.OpenWrite( $"{dir}//.novel_project" );
+			using var filestream = FS.OpenWrite( Editor.Dir.ProjectFile );
 			using var writer = new BinaryWriter( filestream );
 
 			writer.Write( BaseNode.All.Count );
@@ -63,7 +47,6 @@ namespace TerryNovel.Editor
 				writer.Write( has_input );
 				if ( has_input )
 				{
-					Log.Info( node.BaseInput.Id );
 					writer.Write( node.BaseInput.Id );
 				}
 
@@ -92,20 +75,20 @@ namespace TerryNovel.Editor
 
 		private void Load( string name )
 		{
-			var file = $"{ Novel.Directory}//{name}//.novel_project";
+			var file = $"novels/{name}/.novel_project";
+
+
 			if ( !FS.FileExists( file ) )
 			{
 				ShowError( "File was not founded!" );
 				return;
 			}
-
-
-			Editor.Backgrounds.TryStartWathForDir( $"{ Novel.Directory}//{name}//backgrounds" );
-
+			
 			Clear();
 			Plug.AutoIdAssignment = false;
 			BaseNode.AutoIdAssignment = false;
 
+			
 			using var filestream = FS.OpenRead( file );
 			using var reader = new BinaryReader( filestream );
 
@@ -113,6 +96,9 @@ namespace TerryNovel.Editor
 
 			for ( int i = 0; i < node_count;i++){
 				int id = reader.ReadInt32();
+
+				BaseNode.CurrentId = id;
+
 				string classname = reader.ReadString();
 				var pos = reader.ReadVector2();
 
@@ -151,8 +137,20 @@ namespace TerryNovel.Editor
 			reader.Close();
 			filestream.Close();
 
+			Editor.Dir.Name = name;
+
+			Plug.CurrentId = Plug.Dict.Values.Max( p => p.Id ) +1;
+			BaseNode.CurrentId = BaseNode.All.Max( n => n.Id )+1;
+
 			Plug.AutoIdAssignment = true;
 			BaseNode.AutoIdAssignment = true;
+
+
+			foreach(var node in BaseNode.All )
+			{
+				node.OnPostLoad();
+			}
+			Event.Run( "editor.loaded" );
 		}
 
 		private void ShowError(string error)

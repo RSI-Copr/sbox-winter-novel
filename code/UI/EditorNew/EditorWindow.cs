@@ -28,12 +28,11 @@ namespace TerryNovel.Editor
 				{
 
 					var popup = new Popup( btn, Popup.PositionMode.BelowLeft, 0 );
-
-
 					foreach ( var attr in g )
 					{
 						popup.AddOption( attr.Title, () => attr.InvokeStatic() );
 					}
+
 				} );
 			}
 		}
@@ -41,7 +40,8 @@ namespace TerryNovel.Editor
 		[ContextButton( "File", "New" )]
 		public static void CreateNew()
 		{
-			GraphEditor.Reset();
+			Frame.Show<NewProjectFrame>();
+			
 		}
 
 		[ContextButton( "File", "Open" )]
@@ -52,14 +52,9 @@ namespace TerryNovel.Editor
 		[ContextButton( "File", "Save" )]
 		public static void SaveToFile()
 		{
-			GraphEditor.GenerateSaveFile();
+			GraphEditor.Instance.GenerateSaveFile();
 		}
 
-		[ContextButton( "File", "Run" )]
-		public static void Run()
-		{
-			GraphEditor.RunNovelFromEditor();
-		}
 
 		[ContextButton( "File", "Close" )]
 		public static void CloseEditor()
@@ -68,7 +63,21 @@ namespace TerryNovel.Editor
 			Instance.Delete();
 			Instance = null;
 		}
-		
+
+
+		[ContextButton( "Novel", "Run" )]
+		public static void Run()
+		{
+			GraphEditor.Instance.RunNovel();
+		}
+
+
+		[ContextButton( "Novel", "Show" )]
+		public static void ShowNovel()
+		{
+			Novel.RootPanel.SetVisible( true );
+		}
+
 		public static void Open()
 		{
 			if(Instance == null )

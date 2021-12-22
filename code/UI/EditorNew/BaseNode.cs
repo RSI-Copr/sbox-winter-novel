@@ -17,7 +17,7 @@ namespace TerryNovel.Editor
 		public static readonly List<BaseNode> All = new();
 		public static BaseNode GetNodeById( int id ) => All.FirstOrDefault( n => n.Id == id );
 
-
+		
 
 		private readonly static Dictionary<string, Type> NodesNamesDict = new();
 		private readonly static Dictionary<Type, NodeAttribute> NodesDict = new();
@@ -67,7 +67,7 @@ namespace TerryNovel.Editor
 				if ( Outputs == null ) yield break;
 			    foreach(var o in Outputs )
 				{
-					foreach(var o2 in o.NextNodes )
+					foreach(var o2 in o.NextInputs )
 					{
 						yield return o2.Node;
 					}
@@ -105,15 +105,20 @@ namespace TerryNovel.Editor
 			}
 
 			All.Add( this );
+
+			Id = CurrentId;
+
 			if ( AutoIdAssignment )
 			{
-				Id = CurrentId;
 				CurrentId++;
 			}
 		}
 		
 
+		public virtual void OnPostLoad()
+		{
 
+		}
 
 
 		[Event.Hotload]
@@ -153,9 +158,12 @@ namespace TerryNovel.Editor
 				options.AddOption( "Delete", () => Delete() );
 			}
 		}
-		
 
-		
+		public override void OnDeleted()
+		{
+			All.Remove( this );
+		}
+
 		protected virtual void OnEdit( OptionsPanel options, Panel target )
 		{
 		
@@ -170,6 +178,7 @@ namespace TerryNovel.Editor
 	public class NodeAttribute:Attribute
 	{
 		public string Title;
+		public string Group;
 		public bool HasInput = true;
 		public bool HasOutput = true;
 		public bool CanCreate = true;

@@ -14,17 +14,23 @@ namespace TerryNovel.Editor
 		public class CharacterHandler
 		{
 			private readonly Dictionary<int, string> CharactersDict = new();
-			private readonly Dictionary<CharacterNode,string> Dict = new();
+			public readonly List<CharacterNode> AllNodes = new();
 			private readonly List<CharacterPanel> Panels = new();
 			public void AddNode( CharacterNode node )
 			{
-				Dict.Add( node, "" );
+				AllNodes.Add( node );
+				CharactersDict[node.Id] = "";
+			}
+
+			public IEnumerable<CharacterPanel> GetAttachedPanels( CharacterNode node )
+			{
+				return Panels.Where( p => p.CharacterId == node.Id );
 			}
 
 			public void Update( CharacterNode node , string name )
 			{
-				Dict[node] = name;
-				foreach(var p in Panels.Where(p=>p.Node == node) )
+				CharactersDict[node.Id] = name;
+				foreach (var p in GetAttachedPanels(node) )
 				{
 					p.UpdateText( name );
 				}
@@ -32,11 +38,10 @@ namespace TerryNovel.Editor
 
 			public void Remove( CharacterNode node )
 			{
-				Dict.Remove( node );
-				foreach ( var p in Panels.Where( p => p.Node == node ).ToList() )
+				CharactersDict.Remove(node.Id);
+				foreach ( var p in GetAttachedPanels( node ).ToList() )
 				{
 					p.Delete(true);
-					Panels.Remove( p );
 				}
 			}
 
@@ -48,38 +53,46 @@ namespace TerryNovel.Editor
 			{
 				Panels.Remove( pnl );
 			}
-			public string GetName(CharacterNode node )
+			public string GetName(int id )
 			{
-				return Dict[node];
+				return CharactersDict[id];
 			}
-			public IReadOnlyDictionary<CharacterNode,string> Get()
+
+			public IReadOnlyDictionary<int,string> Get()
 			{
-				return Dict;
+				return CharactersDict;
+			}
+
+			public void Clear()
+			{
+				AllNodes.Clear();
+				CharactersDict.Clear();
+				Panels.Clear();
 			}
 		}
 	}
 
 	public class CharacterPanel : Panel
 	{
-		public CharacterNode Node;
+		public int CharacterId;
 		private readonly Label label;
-		public CharacterPanel( CharacterNode node )
+		public CharacterPanel( int id )
 		{
 			AddClass( "character" );
 			label = Add.Label();
 
 			Editor.Characters.RegisterPanel( this );
-			UpdateFrom( node );
+			UpdateFrom( id );
 		}
 		public void UpdateText(string name)
 		{
 			label.Text = name;
 		}
 
-		public void UpdateFrom( CharacterNode node )
+		public void UpdateFrom( int id )
 		{
-			Node = node;
-			label.Text = Editor.Characters.GetName( node );
+			CharacterId = id;
+			label.Text = Editor.Characters.GetName( id );
 		}
 		public override void OnDeleted()
 		{

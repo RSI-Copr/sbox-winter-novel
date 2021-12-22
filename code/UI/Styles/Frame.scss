@@ -17,13 +17,16 @@
 
     .header {
         color: white;
-        font-weight:bold;
+        font-weight: bold;
         box-shadow: 0 2px 2px black;
         height: 25px;
         width: 100%;
         background-color: darkslategrey;
         pointer-events: all;
 
+        .title {
+            pointer-events: none;
+        }
 
         .close {
             position: absolute;

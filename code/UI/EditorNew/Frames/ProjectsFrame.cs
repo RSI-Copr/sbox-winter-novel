@@ -21,20 +21,22 @@ namespace TerryNovel.Editor
 
 			FileList.Layout.ItemHeight = 20f;
 			FileList.OnCreateCell = OnCellCreated;
-
-			FileList.AddItems( Novel.FS.FindDirectory( $"{Novel.Directory}" ).ToArray() );
-
-
+			FindNovels();
 		}
 
 		private void FindNovels()
 		{
-
+			foreach( var fname in Novel.FS.FindDirectory( $"{Novel.Directory}" ) )
+			{
+				FileList.AddItem( fname );
+			}
 		}
 
 		private void OnCellCreated( Panel cell, object data )
 		{
-			var file = (string)data;
+			var file = $"{(string)data}";
+			
+			
 			cell.Add.Button( file, () => { GraphEditor.LoadFromFile( file ); Delete(); } );
 		}
 

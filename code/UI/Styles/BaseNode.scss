@@ -115,6 +115,9 @@
         font-size: 20px;
         background-color: rgba(grey,0.8);
         border: 1px solid black;
+        .lavel{
+            pointer-events:none;
+        }
     }
 
     .dropdown {
@@ -122,5 +125,7 @@
             font-weight:500;
             font-family: MaterialIcons;
         }
+
+        border: 1px solid black;
     }
 }

@@ -19,14 +19,14 @@ namespace TerryNovel.Editor
 			FileWatch fileWatch;
 			public readonly HashSet<string> Files = new();
 
-			public void TryStartWathForDir(string dir )
+			public void StartWathDir(string dir )
 			{
 				if ( !Novel.FS.DirectoryExists( dir ) ) return;
 
 				fileWatch = Novel.FS.Watch( dir );
 				fileWatch.OnChangedFile += OnFileChanged;
 				fileWatch.OnChanges += OnChanged;
-			
+				
 
 				foreach (var file in Novel.FS.FindFile( dir, "*.png" ) )
 				{
@@ -36,7 +36,9 @@ namespace TerryNovel.Editor
 
 			public IEnumerable<string> Get()
 			{
-				return Files.OrderBy(f=>f);
+				//return Files.OrderBy(f=>f);
+				//return Novel.FS.FindFile( Editor.Dir.Backgrounds, "*" );
+				return FileSystem.Mounted.FindFile( "assets/backgrounds/" );
 			}
 
 			public void OnChanged(FileWatch watch)
@@ -48,6 +50,7 @@ namespace TerryNovel.Editor
 			{
 				Log.Info( file );
 			}
+
 		}
 
 		

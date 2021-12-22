@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Sandbox;
 using Sandbox.UI;
 using Sandbox.UI.Construct;
@@ -11,7 +12,7 @@ namespace TerryNovel.Editor
 		public static bool AutoIdAssignment { get; set; } = true;
 		public static int CurrentId { get; set; }
 
-		private readonly static Dictionary<int, Plug> Dict = new();
+		public readonly static Dictionary<int, Plug> Dict = new();
 
 		public static Plug GetById(int id )
 		{
@@ -42,10 +43,15 @@ namespace TerryNovel.Editor
 			AddClass( "plug" );
 			Add.Label( "navigate_next" );
 		}
+		public static void Clear()
+		{
+			Dict.Clear();
+		}
 
 		public override void OnDeleted()
 		{
 			Dict.Remove( Id );
+			Connection.RemoveWithPlug( this );
 		}
 	}
 
@@ -57,13 +63,12 @@ namespace TerryNovel.Editor
 			AddClass( "input" );
 			
 		}
-
-
-
 	}
+
 	public class PlugOut : Plug
 	{
-		public readonly List<PlugIn> NextNodes = new();
+		public IEnumerable<PlugIn> NextInputs => Connection.All.Where(c=>c.Output == this).Select(c=>c.Input);
+		public IEnumerable<BaseNode> NextNodes => NextInputs.Select( p => p.Node );
 		public readonly Color Color;
 		private Color GenerateRandomColor()
 		{
@@ -82,7 +87,7 @@ namespace TerryNovel.Editor
 		public static readonly List<Connection> All = new();
 		public static Connection Create(PlugOut output, PlugIn input )
 		{
-			output.NextNodes.Add( input );
+			//output.NextInputs.Add( input );
 
 			var conn =  new Connection()
 			{
@@ -95,7 +100,11 @@ namespace TerryNovel.Editor
 			return conn;
 		}
 
-		
+		public static void RemoveWithPlug(Plug plug)
+		{
+			All.RemoveAll( c => c.Input == plug || c.Output == plug );
+		}
+
 
 		public PlugIn Input;
 		public PlugOut Output;
