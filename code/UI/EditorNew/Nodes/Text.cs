@@ -167,7 +167,16 @@ namespace TerryNovel.Editor
 			var msgs = Messages.GetRange( index, Messages.Count - index );
 			foreach(var m in msgs )
 			{
-				Log.Info( m.Text );
+				m.Parent = null;
+			}
+
+			var new_msg = new MessageEntry( this );
+			Messages.Insert( index, new_msg );
+			Canvas.AddChild( new_msg );
+
+			foreach ( var m in msgs )
+			{
+				m.Parent = Canvas;
 			}
 		}
 
