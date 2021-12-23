@@ -247,7 +247,7 @@ namespace TerryNovel
 			{
 				foreach(var img in sprites.Values )
 				{
-					img.Delete();				
+					img.Delete( true );				
 				}
 				sprites.Clear();
 			}
@@ -259,8 +259,22 @@ namespace TerryNovel
 					sprites.GetValueOrDefault( id )?.Delete();
 					return;
 				}
+
+				
+
 				var sprite = Info.Sprites[id];
-				var img = Add.Image( $"assets/textures/{sprite.Name}" );
+				var img = Add.Image( $"assets/textures/{sprite.Name}","sprite" );
+				Log.Info( spriteCome );
+				switch ( spriteCome )
+				{
+					case SpriteComeFrom.Left:
+						img.AddClass( "from-left" );
+						break;
+					case SpriteComeFrom.Rigth:
+						img.AddClass( "from-right" );
+						break;
+				}
+
 				sprites.Add( id, img );
 			}
 		}

@@ -149,11 +149,26 @@ namespace TerryNovel.Editor
 
 			var msg = target as MessageEntry ?? target.Parent as MessageEntry ?? target.Parent?.Parent?.Parent as MessageEntry;
 			if ( msg == null ) return;
+
+			options.AddOption( "Insert" , () => InsertAfterMessage(msg) );
+
 			if(msg.IsFirst ) return;
 
 			var text = msg.Text;
 			options.AddOption( $"Delete line: {(text.Length > 8 ? text[..5] + "..." : text)}" ,()=> RemoveLine( msg ) );
 			
+		}
+
+
+		private void InsertAfterMessage( MessageEntry msg)
+		{
+			int index = Messages.IndexOf( msg ) + 1;
+
+			var msgs = Messages.GetRange( index, Messages.Count - index );
+			foreach(var m in msgs )
+			{
+				Log.Info( m.Text );
+			}
 		}
 
 		public override void Read( BinaryReader reader )
