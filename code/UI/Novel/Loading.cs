@@ -21,23 +21,23 @@ namespace TerryNovel
 		{
 			FS.CreateDirectory( Directory );
 		}
-		public static void FindAll()
+		public static IEnumerable<string> FindAll(BaseFileSystem fs, string directory )
 		{
-			foreach ( var dir in FS.FindDirectory( Directory ) )
+			foreach ( var dir in fs.FindDirectory( directory ) )
 			{
-				var filename = FS.FindFile( $"{Directory}\\{dir}", "*.novel" ).FirstOrDefault();
+				var filename = fs.FindFile( $"{directory}\\{dir}", "*.novel" ).FirstOrDefault();
 				if ( filename == null ) continue;
-				LoadFromFile( $"{Directory}\\{dir}\\{filename}" );
+				yield return $"{directory}\\{dir}\\{filename}";
 			}
 		}
 
-		public static bool ReadInfo( string filename, out string name, out string desc)
+		public static bool ReadInfo( BaseFileSystem fs, string filename, out string name, out string desc)
 		{
 			name = null;
 			desc = null;
 
-			if ( !FS.FileExists( filename ) ) return false;
-			using var filestream = FS.OpenRead( filename );
+			if ( !fs.FileExists( filename ) ) return false;
+			using var filestream = fs.OpenRead( filename );
 			using var reader = new BinaryReader( filestream );
 
 			name = reader.ReadString();

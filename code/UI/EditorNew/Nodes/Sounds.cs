@@ -11,7 +11,7 @@ namespace TerryNovel.Editor
 	
 	
 
-	[Node( Title = "Stop current music", Group = "Events", HasOutput = false )]
+	[Node( Title = "Stop music", Group = "Events", HasOutput = false )]
 	public class MusicStopNode : BaseNode, IEventNode
 	{
 		public NovelEvent GenerateEvent()
@@ -20,7 +20,7 @@ namespace TerryNovel.Editor
 		}
 	}
 
-	[Node( Title = "Set playing music", Group = "Events", HasOutput = false )]
+	[Node( Title = "Play music", Group = "Events", HasOutput = false )]
 	public class MusicNode : BaseNode,IEventNode
 	{
 		public string Name
