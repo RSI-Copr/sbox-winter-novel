@@ -50,9 +50,15 @@ namespace TerryNovel.Editor
 		private void ShowNodesCreation()
 		{
 			var ops = new OptionsPanel();
-			foreach ( var kv in BaseNode.NodesNames )
+			foreach ( var g in BaseNode.NodesTypes.Where(kv=>kv.Value.CanCreate).GroupBy(kv=> kv.Value.Group ) )
 			{
-				ops.AddOption( kv.Key, () => CreateNode( kv.Value ) );
+				ops.AddSpacer( g.Key );
+
+				foreach(var kv in g )
+				{
+					ops.AddOption( kv.Value.Title, () => CreateNode( kv.Key ) );
+				}
+				
 			}
 		}
 		private void CreateNode( Type type )

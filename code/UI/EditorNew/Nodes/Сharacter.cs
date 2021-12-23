@@ -5,7 +5,7 @@ using System.IO;
 
 namespace TerryNovel.Editor
 {
-	[Node( Title = "Character", HasInput = false, HasOutput = false )]
+	[Node( Title = "Character", Group = "Info", HasInput = false, HasOutput = false )]
 	public class CharacterNode:BaseNode
 	{
 		private TextEntry textEntry;

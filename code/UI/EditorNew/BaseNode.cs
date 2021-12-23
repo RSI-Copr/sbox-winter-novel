@@ -21,7 +21,7 @@ namespace TerryNovel.Editor
 
 		private readonly static Dictionary<string, Type> NodesNamesDict = new();
 		private readonly static Dictionary<Type, NodeAttribute> NodesDict = new();
-		public static IReadOnlyDictionary<string, Type> NodesNames => NodesNamesDict;
+		public static IReadOnlyDictionary<Type, NodeAttribute> NodesTypes => NodesDict;
 
 		public int Id;
 		
@@ -124,7 +124,6 @@ namespace TerryNovel.Editor
 		[Event.Hotload]
 		public static void Refill()
 		{
-			NodesNamesDict.Clear();
 			NodesDict.Clear();
 			Init();
 		}
@@ -137,12 +136,6 @@ namespace TerryNovel.Editor
 				if ( attr == null ) continue;
 
 				NodesDict.Add( type, attr );
-
-				if ( attr.CanCreate )
-				{
-					NodesNamesDict.Add( attr.Title, type );
-				}
-				
 			}
 		}
 
@@ -178,7 +171,7 @@ namespace TerryNovel.Editor
 	public class NodeAttribute:Attribute
 	{
 		public string Title;
-		public string Group;
+		public string Group = "Other";
 		public bool HasInput = true;
 		public bool HasOutput = true;
 		public bool CanCreate = true;

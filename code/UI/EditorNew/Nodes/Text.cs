@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace TerryNovel.Editor
 {
-	[Node( Title = "Message" , HasOutput = false)]
+	[Node( Title = "Message" , Group = "Text", HasOutput = false)]
 	public class MessageNode : BaseNode
 	{
 		public readonly List<MessageEntry> Messages = new();
@@ -20,7 +20,7 @@ namespace TerryNovel.Editor
 			private readonly MessageNode Node;
 			private TextEntry textEntry;
 			private CharacterPanel characterPanel;
-
+			private Button selectBtn;
 			public string Text
 			{
 				get => textEntry.Text;
@@ -31,7 +31,7 @@ namespace TerryNovel.Editor
 			public MessageEntry( MessageNode node )
 			{
 				AddClass( "message" );
-				Add.Button( "face", "characterselect", OpenСharacterSelector );
+				selectBtn = Add.Button( "face", "characterselect", OpenСharacterSelector );
 
 				textEntry = Add.TextEntry( "" );
 				textEntry.Multiline = true;
@@ -51,12 +51,38 @@ namespace TerryNovel.Editor
 				{
 					popup.AddOption( kv.Value, () => SelectCharacter(kv.Key) );
 				}
+
+				popup.AddOption( "Protagonist", () => SelectCharacter( -3 ) );
+				popup.AddOption( "Mind voice", () => SelectCharacter( -2 ) );
 			}
 
 			public void SelectCharacter( int id )
 			{
-				if ( id == -1 ) return;
 				CharacterId = id;
+				if (id < -1 )
+				{
+					
+					characterPanel?.Delete();
+					characterPanel = null;
+
+					if(id == -2 )
+					{
+						selectBtn.Text = "psychology";
+					}
+					else
+					{
+						selectBtn.Text = "record_voice_over";
+					}
+
+					return;
+				}
+
+
+				if ( id == -1 ) return;
+
+				selectBtn.Text = "face";
+
+				
 				if( characterPanel == null || !characterPanel.IsValid() )
 				{
 					characterPanel = new CharacterPanel( id );
@@ -165,7 +191,7 @@ namespace TerryNovel.Editor
 		
 	}
 
-	[Node( Title = "Answer" )]
+	[Node( Title = "Answer", Group = "Text" )]
 	public class AnswerNode : BaseNode
 	{
 		private const int MaxAnswers = 4;

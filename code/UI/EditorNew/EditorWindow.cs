@@ -75,7 +75,7 @@ namespace TerryNovel.Editor
 		[ContextButton( "Novel", "Show" )]
 		public static void ShowNovel()
 		{
-			Novel.RootPanel.SetVisible( true );
+			Novel.Show();
 		}
 
 		public static void Open()

@@ -8,11 +8,29 @@ using Sandbox.UI;
 
 namespace TerryNovel
 {
-	public class Music
+	public static class Music
 	{
-		public void Play(string name )
+		private static Sound? Current;
+		public static void Set(string name )
 		{
+			Current?.Stop();
+			Current = Sound.FromScreen( name );
+		}
+
+		public static void Mute(bool value)
+		{
+			Current?.SetVolume( value ? 0 : 1 );
 			
+		}
+
+		public static void Pause( bool value )
+		{
+			Mute( value );
+		}
+
+		public static void Stop()
+		{
+			Current?.Stop();
 		}
 	}
 }

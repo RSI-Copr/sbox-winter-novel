@@ -28,6 +28,10 @@ namespace TerryNovel
 			}
 			All.Clear();
 		}
+		public void AddSpacer(string name )
+		{
+			Add.Label( name, "spacer" );
+		}
 
 		public void AddOption( string name, Action onclick = null )
 		{

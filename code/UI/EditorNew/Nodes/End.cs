@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TerryNovel.Editor
 {
-	[Node( Title = "Story end" , HasOutput = false)]
+	[Node( Title = "Story end", Group = "Events" , HasOutput = false)]
 	public class EndNode : BaseNode
 	{
 

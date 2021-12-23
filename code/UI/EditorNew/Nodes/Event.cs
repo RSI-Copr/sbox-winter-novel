@@ -11,7 +11,7 @@ namespace TerryNovel.Editor
 {
 	
 
-	[Node( Title = "Set background", HasOutput = false )]
+	[Node( Title = "Set background", Group = "Events", HasOutput = false )]
 	public class BackGroundEventNode: BaseNode, IEventNode
 	{
 		public string Name
@@ -23,7 +23,7 @@ namespace TerryNovel.Editor
 		private readonly FileSelector selector;
 		public BackGroundEventNode()
 		{
-			selector = AddChild<FileSelector>( );
+			selector = Canvas.AddChild<FileSelector>( );
 			selector.Finder = Editor.Backgrounds.Get;
 		}
 
@@ -43,14 +43,25 @@ namespace TerryNovel.Editor
 		}
 	}
 
-	[Node( Title = "Play music", HasOutput = false )]
-	public class MusicEventNode : BaseNode, IEventNode
+
+	[Node( Title = "Blackout", Group = "Events", HasOutput = false )]
+	public class BlackScreenNode : BaseNode, IEventNode
 	{
 		public NovelEvent GenerateEvent()
 		{
-			throw new NotImplementedException();
+			return new BlackScreenEvent( true );
 		}
 	}
+	[Node( Title = "Unblackout", Group = "Events", HasOutput = false )]
+	public class BlackScreenOffNode : BaseNode, IEventNode
+	{
+		public NovelEvent GenerateEvent()
+		{
+			return new BlackScreenEvent( false );
+		}
+	}
+
+
 
 	public class FileSelector : PopupButton
 	{

@@ -8,7 +8,7 @@ using Sandbox.UI;
 
 namespace TerryNovel.Editor
 {
-	[Node(Title = "Character sprite", HasInput = false, HasOutput = false)]
+	[Node(Title = "Character sprite", Group = "Info", HasInput = false, HasOutput = false)]
 	public class SpriteNode: BaseNode
 	{
 		public string File

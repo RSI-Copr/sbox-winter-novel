@@ -48,6 +48,7 @@ namespace TerryNovel
 
 		public void RunMessageEvents(Message msg)
 		{
+			if ( msg == null ) return;
 			foreach(int i in msg.Events )
 			{
 				Events[i].Run();

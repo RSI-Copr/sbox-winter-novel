@@ -108,8 +108,8 @@
 
     .character {
         position: absolute;
-        width: 100px;
-        left: -100px;
+        min-width: 100px;
+        left: -105px;
         justify-content: center;
         align-items: center;
         font-size: 20px;

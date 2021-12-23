@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Sandbox;
 
 namespace TerryNovel
 {
@@ -58,6 +59,51 @@ namespace TerryNovel
 		public override void Call( params string[] args )
 		{
 			Novel.SetBackground( args[0] );
+		}
+	}
+
+	public class MusicPlayEvent : NovelEvent
+	{
+		public MusicPlayEvent( string name )
+		{
+			arguments = new string[] { name };
+		}
+		public override void Call( params string[] args )
+		{
+			Music.Set(args[0]);
+		}
+	}
+
+	public class SoundPlayEvent : NovelEvent
+	{
+		public SoundPlayEvent( string name )
+		{
+			arguments = new string[] { name };
+		}
+		public override void Call( params string[] args )
+		{
+			Log.Info( args[0] );
+			Sound.FromScreen( args[0] );
+		}
+	}
+
+	public class MusicStopEvent : NovelEvent
+	{
+		public override void Call( params string[] args )
+		{
+			Music.Stop();
+		}
+	}
+	public class BlackScreenEvent : NovelEvent
+	{
+		public BlackScreenEvent(bool value)
+		{
+			arguments = new string[] { value.ToString() };
+		}
+
+		public override void Call( params string[] args )
+		{
+			Novel.SetBlack( args[0].ToBool() );
 		}
 	}
 }

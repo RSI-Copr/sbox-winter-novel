@@ -42,6 +42,11 @@ namespace TerryNovel.Editor
 		
 	}
 
+	public interface INavigateHelper
+	{
+		public int MessageId { get; set; }
+	}
+
 	class NodeGraphParser
 	{
 		private readonly NovelInfo Info = new();
@@ -110,12 +115,29 @@ namespace TerryNovel.Editor
 					msg.PrevMessage = PreviousMessage.Id;
 				}
 				PreviousMessage = msg;
-				
-				if( entry.CharacterId != -1 )
+
+				var id = entry.CharacterId;
+
+				switch ( id )
 				{
-					CurrentCharacter = Info.Characters.IndexOf(Editor.Characters.GetName( entry.CharacterId));
-					Log.Info( $"Обновлен текущий персонаж {CurrentCharacter}" ); ;
+					case -1:
+						break;
+
+					case -2:
+						CurrentCharacter = -1;
+					break;
+
+					case -3:
+						CurrentCharacter = -2;
+					break;
+
+					default:
+						CurrentCharacter = Info.Characters.IndexOf( Editor.Characters.GetName( entry.CharacterId ) );
+						break;
+
+
 				}
+				
 				msg.Character = CurrentCharacter;
 
 

@@ -14,6 +14,8 @@ namespace TerryNovel
 		public const string Directory = "novels";
 		public static BaseFileSystem FS => FileSystem.Data;
 
+		public static string ProtagonistName { get; set; } = "Insert name here";
+
 		public static Novel RootPanel { get; private set; }
 		public static NovelInfo Info { get; private set; }
 		
@@ -26,7 +28,7 @@ namespace TerryNovel
 		private static TextCanvas Canvas;
 		private static AnswersCanvas Answers;
 		private static CharacterInfo Character;
-
+		private static Panel BlackScreen;
 
 
 		public Novel()
@@ -34,17 +36,23 @@ namespace TerryNovel
 			RootPanel = this;
 			this.LoadDefaultStyleSheet();
 
+			BlackScreen = Add.Panel( "black" );
 			Answers = AddChild<AnswersCanvas>();
-
 			Character = Add.Panel( "character-canvas" ).AddChild<CharacterInfo>();
 			Canvas = Add.Panel( "canvas" ).AddChild<TextCanvas>();
 			
 			Canvas.OnTextShown = OnTextComplete;
 
+			
+
 			AcceptsFocus = true;
 			Focus();
 		}
-
+		public static void Show()
+		{
+			RootPanel.SetVisible( true );
+			Music.Pause( false );
+		}
 		protected override void OnClick( MousePanelEvent e )
 		{
 			if ( Canvas.IsTyping )
@@ -63,10 +71,17 @@ namespace TerryNovel
 		public override void OnButtonEvent( ButtonEvent e )
 		{
 			base.OnButtonEvent( e );
-			if ( e.Button == "escape" ) this.SetVisible( false );
+			if ( e.Button == "escape" )
+			{
+				this.SetVisible( false );
+				Music.Pause(true);
+			}
 		}
 
-
+		public static void SetBlack(bool value )
+		{
+			BlackScreen.Style.Opacity = value ? 1 : 0;
+		}
 
 		public static void Start( NovelInfo info )
 		{
@@ -88,13 +103,13 @@ namespace TerryNovel
 				return;
 			}
 
-
+			Info.RunMessageEvents( CurrentMessage );
 
 			var msg = Info.Messages[CurrentMessageId];
 			CurrentMessage = msg;
 			Canvas.Print( msg.Text );
 			Answers.Clear();
-			Info.RunMessageEvents( msg );
+			
 			Character.Set( msg.Character );
 
 			CurrentMessageId = msg.NextMessage;
@@ -113,7 +128,7 @@ namespace TerryNovel
 		{
 		
 			//Texture.CreateArray().Finish( data: FS.ReadAllBytes( $"novels/{FolderName}/backgrounds/{image}" ).ToArray() );
-			RootPanel.Style.SetBackgroundImage($"backgrounds/{image}");
+			RootPanel.Style.SetBackgroundImage($"assets/backgrounds/{image}");
 		}
 		public static void SetText( string name )
 		{
@@ -157,7 +172,8 @@ namespace TerryNovel
 				}
 				else
 				{
-					Label.Text = Info.Characters[id];
+					this.SetVisible( true );
+					Label.Text = id == -2 ? ProtagonistName : Info.Characters[id];
 					Canvas.Style.BorderTopLeftRadius = 0;
 				}
 				
@@ -205,7 +221,9 @@ namespace TerryNovel
 
 			public void Print(string text)
 			{
-				buffer = text;
+				
+
+				buffer = text.Replace("{PTG}", ProtagonistName,StringComparison.OrdinalIgnoreCase);
 				LastCharAdd = 0;
 				CurChar = 0;
 				Label.Text = "";
