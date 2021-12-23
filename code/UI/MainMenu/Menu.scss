@@ -79,14 +79,14 @@ MainMenu .button {
 .novels-canvas {
     display: none;
     position: absolute;
-    background-color: rgba(cadetblue,0.6);
+    background-color: rgba(148 168 209,0.6);
     width: 40%;
     height: 70%;
     justify-self: center;
     align-self: center;
     margin-left: 25%;
     border-radius: 10px;
-    border: 5px solid #95aad2;
+    border: 5px solid rgb(100 127 205);
     backdrop-filter: blur( 10px );
     flex-direction: column;
 
@@ -106,7 +106,7 @@ MainMenu .button {
                 width: 100%;
                 text-align: center;
                 font-weight: bold;
-                color: #efd3df;
+                color: white;
             }
         }
     }
@@ -134,7 +134,7 @@ MainMenu .button {
         border-bottom: 5px solid white;
     }
 
-    background-color: cadetblue;
+    background-color: rgb(148 168 209);
     min-height: 300px;
     width: 100%;
     color: white;
