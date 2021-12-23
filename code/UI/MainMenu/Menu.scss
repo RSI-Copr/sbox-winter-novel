@@ -50,17 +50,7 @@ MainMenu .button {
     z-index: -1;
     background-repeat: no-repeat;
     background-size: cover;
-}
-
-.oval {
-    position: absolute;
-    width: 80%;
-    height: 110%;
-    align-self: center;
-    background-color: green;
-    border-radius: 100%;
-    margin-left: -30%;
-    z-index: -1;
+    min-width: 400px;
 }
 
 .snow {
@@ -75,30 +65,67 @@ MainMenu .button {
     position: absolute;
     height: 100%;
     width: 32%;
+    min-width: 400px;
     background-image: url( /ui/mainmenu/fterry.png );
     background-repeat: no-repeat;
     background-size: cover;
+    background-position:center bottom;
     right: 10%;
     z-index: -3;
 }
 
-.novels-list {
-    display:none;
+.novels-canvas {
+    display: none;
     position: absolute;
     background-color: rgba(cadetblue,0.6);
     width: 40%;
-    height: 40%;
+    height: 70%;
     justify-self: center;
     align-self: center;
     margin-left: 25%;
     border-radius: 10px;
     border: 5px solid #95aad2;
     backdrop-filter: blur( 10px );
-    //padding: 10px;
-    overflow: scroll;
     flex-direction: column;
-}
 
+
+    .novels-list {
+        overflow: scroll;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+
+        .category {
+            min-height: 50px;
+            font-size: 31px;
+            background-color: #95aad2;
+
+            .label {
+                width: 100%;
+                text-align: center;
+                font-weight: bold;
+                color: #efd3df;
+            }
+        }
+    }
+
+    .buttons {
+        min-height: 15%;
+        border-top: 5px solid #95aad2;
+    }
+
+    .back {
+        margin-left: 2%;
+        margin-top: 2%;
+        font-size: 48px;
+    }
+
+    .start {
+        margin-left: 41%%;
+        margin-top: 2%;
+        font-size: 48px;
+    }
+}
 
 .entry {
     &:not(:last-child) {
@@ -106,7 +133,7 @@ MainMenu .button {
     }
 
     background-color: cadetblue;
-    min-height: 250px;
+    min-height: 300px;
     width: 100%;
     color: white;
     padding: 2%;
@@ -127,7 +154,7 @@ MainMenu .button {
         font-size: 25px;
     }
 
-    .image {
+    image {
         width: 100%;
         height: 100%;
         background-color: none;

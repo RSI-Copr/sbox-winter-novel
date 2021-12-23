@@ -9,42 +9,18 @@ namespace TerryNovel
 	[UseTemplate]
 	public class MainMenu : Panel
 	{
-		private VirtualScrollPanel NovelsList;
+
+		private NovelCanvas NovelCanvas;
+
 		public MainMenu()
 		{
-			NovelsList = AddChild<VirtualScrollPanel>( "novels-list" );
-			NovelsList.Layout.ItemHeight = Length.Percent( 50f ).Value;
-			NovelsList.OnCreateCell = OnCellCreated;
-
+			NovelCanvas = AddChild<NovelCanvas>();
 
 		}
-
-		private void OnCellCreated( Panel cell, object data )
-		{
-			cell.AddChild<NovelEntry>();
-		}
-
-
-		public class NovelEntry:Panel{
-			public NovelEntry()
-			{
-				AddClass( "entry" );
-
-				var pnl = Add.Panel( "labels" );
-
-				pnl.Add.Label( "Test", "title" );
-				pnl.Add.Label( "Description", "desc" );
-
-				Add.Panel( "img-canvas" ).Add.Image( "UI/background-grid.png" );
-			}
-		}
-
-
+		
 		public void Startnovel()
 		{
-			NovelsList.SetVisible( true );
-
-			NovelsList.AddItem( "test" );
+			NovelCanvas.SetVisible(true);
 		}
 
 		public void ShowAbout()
@@ -60,12 +36,60 @@ namespace TerryNovel
 		{
 			Local.Client.Kick();
 		}
-
-
-
-
 	}
 
+	public class NovelCanvas: Panel
+	{
+		
+		private Panel NovelsList;
+		private Button StartButtton;
+		public NovelCanvas()
+		{
+			AddClass("novels-canvas");
+
+
+
+
+			NovelsList = Add.Panel( "novels-list" );
+
+			NovelsList.Add.Panel("category").Add.Label("Main");/////
+
+			NovelsList.AddChild<NovelEntry>();
+			NovelsList.AddChild<NovelEntry>();
+
+			NovelsList.Add.Panel( "category" ).Add.Label( "Bonus" );/////
+
+			NovelsList.AddChild<NovelEntry>();
+
+			var btns = Add.Panel("buttons");
+			
+			var back = btns.Add.Button( "Back","back" );
+			StartButtton = btns.Add.Button( "Start", "start" );
+
+		}
+
+		private void OnCellCreated(Panel cell, object data)
+		{
+			cell.AddChild<NovelEntry>();
+		}
+
+
+		public class NovelEntry : Panel
+		{
+			public NovelEntry()
+			{
+				AddClass("entry");
+
+				var pnl = Add.Panel("labels");
+
+				pnl.Add.Label("Test", "title");
+				pnl.Add.Label("Description", "desc");
+
+				Add.Panel("img-canvas").Add.Image("UI/background-grid.png");
+			}
+		}
+
+	}
 
 
 }
