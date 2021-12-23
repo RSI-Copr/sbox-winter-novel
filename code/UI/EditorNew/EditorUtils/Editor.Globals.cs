@@ -36,5 +36,7 @@ namespace TerryNovel.Editor
 			GraphEditor.Reset();
 			Active = true;
 		}
+
+		public static NovelInfo Info { get; set; }
 	}
 }

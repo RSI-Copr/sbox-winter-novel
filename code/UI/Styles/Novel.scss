@@ -106,4 +106,21 @@ Novel {
         align-items: center;
         font-size: 30px;
     }
+
+    SpritesCanvas {
+        background-color: red;
+        justify-content: center;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+
+
+        image {
+            width: 100%;
+            height: 100%;
+            background-position: center bottom;
+            background-repeat: no-repeat;
+        }
+    }
 }

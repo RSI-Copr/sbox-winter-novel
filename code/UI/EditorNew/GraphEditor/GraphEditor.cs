@@ -110,7 +110,7 @@ namespace TerryNovel.Editor
 		{
 			for (int i = BaseNode.All.Count -1; i>= 0;i-- )
 			{
-				BaseNode.All[i].Delete( true );
+				BaseNode.All[i]?.Delete( true );
 			}
 			 
 			BaseNode.All.Clear();
@@ -124,6 +124,7 @@ namespace TerryNovel.Editor
 			Plug.CurrentId = 0;
 			Plug.AutoIdAssignment = true;
 			Editor.Characters.Clear();
+			Editor.Sprites.Clear();
 
 			Center();
 		}

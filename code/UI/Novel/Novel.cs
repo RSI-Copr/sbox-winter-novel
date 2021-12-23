@@ -11,14 +11,10 @@ namespace TerryNovel
 {
 	public partial class Novel : Panel
 	{
-		public const string Directory = "novels";
-		public static BaseFileSystem FS => FileSystem.Data;
 
 		public static string ProtagonistName { get; set; } = "Insert name here";
-
 		public static Novel RootPanel { get; private set; }
 		public static NovelInfo Info { get; private set; }
-		
 		public static string FolderName { get; set; }
 
 		public static int CurrentMessageId { get; set; } = 0;
@@ -29,6 +25,7 @@ namespace TerryNovel
 		private static AnswersCanvas Answers;
 		private static CharacterInfo Character;
 		private static Panel BlackScreen;
+		private static SpritesCanvas Sprites;
 
 
 		public Novel()
@@ -37,6 +34,7 @@ namespace TerryNovel
 			this.LoadDefaultStyleSheet();
 
 			BlackScreen = Add.Panel( "black" );
+			Sprites = AddChild<SpritesCanvas>();
 			Answers = AddChild<AnswersCanvas>();
 			Character = Add.Panel( "character-canvas" ).AddChild<CharacterInfo>();
 			Canvas = Add.Panel( "canvas" ).AddChild<TextCanvas>();
@@ -48,11 +46,8 @@ namespace TerryNovel
 			AcceptsFocus = true;
 			Focus();
 		}
-		public static void Show()
-		{
-			RootPanel.SetVisible( true );
-			Music.Pause( false );
-		}
+		
+
 		protected override void OnClick( MousePanelEvent e )
 		{
 			if ( Canvas.IsTyping )
@@ -78,11 +73,15 @@ namespace TerryNovel
 			}
 		}
 
+		public static void Show()
+		{
+			RootPanel.SetVisible( true );
+			Music.Pause( false );
+		}
 		public static void SetBlack(bool value )
 		{
 			BlackScreen.Style.Opacity = value ? 1 : 0;
 		}
-
 		public static void Start( NovelInfo info )
 		{
 			if ( RootPanel == null )
@@ -94,6 +93,7 @@ namespace TerryNovel
 			info.RunEvents();
 			CurrentMessageId = 0;
 			ShowMessage();
+			Sprites.Clear();
 		}
 		private static void ShowMessage()
 		{
@@ -115,8 +115,6 @@ namespace TerryNovel
 			CurrentMessageId = msg.NextMessage;
 			Log.Info( CurrentMessageId );
 		}
-
-
 		private static void OnTextComplete()
 		{
 			if( CurrentMessage?.HasAnswers ?? false )
@@ -134,25 +132,12 @@ namespace TerryNovel
 		{
 			Canvas.Print( name );
 		}
+		public static void RunSpriteEvent(int id, SpriteEventType spriteEvent, SpriteComeFrom spriteCome )
+		{
+			Sprites.DoSprite( id, spriteEvent, spriteCome );
+		}
 
 
-		public static void CreateDir()
-		{
-			FS.CreateDirectory( Directory );
-		}
-		public static void FindAll()
-		{
-			foreach ( var dir in FS.FindDirectory( Directory ) )
-			{
-				var filename = FS.FindFile( $"{Directory}\\{dir}", "*.novel" ).FirstOrDefault();
-				if ( filename == null ) continue;
-				LoadFromFile( $"{Directory}\\{dir}\\{filename}" );
-			}
-		}
-		public static void LoadFromFile( string filename )
-		{
-
-		}
 
 	    class CharacterInfo : Panel
 		{
@@ -248,6 +233,35 @@ namespace TerryNovel
 						OnTextShown?.Invoke();
 					}
 				}
+			}
+		}
+
+		class SpritesCanvas:Panel
+		{
+			private Dictionary<int, Image> sprites = new();
+			public SpritesCanvas()
+			{
+
+			}
+			public void Clear()
+			{
+				foreach(var img in sprites.Values )
+				{
+					img.Delete();				
+				}
+				sprites.Clear();
+			}
+
+			public void DoSprite( int id, SpriteEventType spriteEvent, SpriteComeFrom spriteCome )
+			{
+				if(spriteEvent == SpriteEventType.Delete )
+				{
+					sprites.GetValueOrDefault( id )?.Delete();
+					return;
+				}
+				var sprite = Info.Sprites[id];
+				var img = Add.Image( $"assets/textures/{sprite.Name}" );
+				sprites.Add( id, img );
 			}
 		}
 	}

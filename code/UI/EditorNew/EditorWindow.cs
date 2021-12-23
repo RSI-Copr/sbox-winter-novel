@@ -78,6 +78,13 @@ namespace TerryNovel.Editor
 			Novel.Show();
 		}
 
+		[ContextButton( "Novel", "Compile" )]
+		public static void CompileNovel()
+		{
+			GraphEditor.Instance.GenetateNovelFile();
+		}
+		
+
 		public static void Open()
 		{
 			if(Instance == null )

@@ -22,14 +22,8 @@ namespace TerryNovel.Editor
 
 		public void RunNovel()
 		{
-			var infoNode = GetInfoNode();
+			
 			var start = GetStartNode();
-
-			var info = new NovelInfo()
-			{
-				Name = infoNode.Title,
-				Description = infoNode.Desc,
-			};
 			
 			var parser = new NodeGraphParser();
 
@@ -55,7 +49,9 @@ namespace TerryNovel.Editor
 
 		public NovelInfo Parse(StartNode start )
 		{
+			Editor.Info = Info;
 			AddCharacters();
+			AddSprites();
 			foreach ( var node in start.DependedNodes )
 			{
 				if ( node is IEventNode ev )
@@ -71,7 +67,14 @@ namespace TerryNovel.Editor
 
 			return Info;
 		}
+		private void AddSprites()
+		{
+			foreach ( var sprite in BaseNode.All.OfType<SpriteNode>() )
+			{
+				Info.Sprites.Add( new() { Name = sprite.File, Scale = sprite.Scale } );
 
+			}
+		}
 		private void AddCharacters()
 		{
 			foreach ( var ch_info in BaseNode.All.OfType<CharacterNode>() )

@@ -9,7 +9,7 @@ namespace TerryNovel
 {
 
 
-	public class NovelEvent
+	public class NovelEvent:LibraryClass
 	{
 		public string[] arguments;
 		public NovelEvent( params string[] args )
@@ -105,5 +105,27 @@ namespace TerryNovel
 		{
 			Novel.SetBlack( args[0].ToBool() );
 		}
+	}
+
+	public class SpriteEvent : NovelEvent
+	{
+		
+		public override void Call( params string[] args )
+		{
+			Novel.RunSpriteEvent( args[0].ToInt(), Enum.Parse<SpriteEventType>( args[1] ), Enum.Parse<SpriteComeFrom>( args[2] ) );
+		}
+	}
+
+	public enum SpriteEventType
+	{
+		Spawn,
+		Delete,
+	}
+
+	public enum SpriteComeFrom
+	{
+		Left,
+		Rigth,
+		Center,
 	}
 }

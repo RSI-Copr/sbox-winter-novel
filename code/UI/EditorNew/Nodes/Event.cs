@@ -20,10 +20,10 @@ namespace TerryNovel.Editor
 			set => selector.Value = value;
 		}
 
-		private readonly FileSelector selector;
+		private readonly StringSelector selector;
 		public BackGroundEventNode()
 		{
-			selector = Canvas.AddChild<FileSelector>( );
+			selector = Canvas.AddChild<StringSelector>( );
 			selector.Finder = Editor.Backgrounds.Get;
 		}
 
@@ -63,7 +63,7 @@ namespace TerryNovel.Editor
 
 
 
-	public class FileSelector : PopupButton
+	public class StringSelector : PopupButton
 	{
 		private string value;
 		public string Value
@@ -80,7 +80,7 @@ namespace TerryNovel.Editor
 		public Func<IEnumerable<string>> Finder;
 
 
-		public FileSelector()
+		public StringSelector()
 		{
 			AddClass( "dropdown" );
 			Add.Icon( "expand_more", "dropdown_indicator" );

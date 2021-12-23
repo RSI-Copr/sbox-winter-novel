@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace TerryNovel
 {
-	public class NovelInfo
+	public partial class NovelInfo
 	{
-		public string Name;
-		public string Description;
-		public readonly List<Message> Messages = new();
-		public readonly List<NovelEvent> Events = new();
-		public readonly List<int> StartEvents = new();
-		public readonly List<string> Characters = new();
-
+		public string Name;//
+		public string Description;//
+		public readonly List<Message> Messages = new();//
+		public readonly List<NovelEvent> Events = new();//
+		public List<int> StartEvents = new();//
+		public readonly List<string> Characters = new();//
+		public readonly List<Sprite> Sprites = new();
 
 		public Message AddMessage()
 		{
@@ -72,24 +72,29 @@ namespace TerryNovel
 
 	public class Message
 	{
-		public int Id;
-		public string Text;
-		public int NextMessage = -1;
-		public int PrevMessage = -1;
-		public int Character = -1;
-		public List<Answer> Answers;
-		public List<int> Events = new();
+		public int Id;//
+		public string Text;//
+		public int NextMessage = -1;//
+		public int PrevMessage = -1;//
+		public int Character = -1;//
+		public List<Answer> Answers;//
+		public List<int> Events = new();//
 
 		public bool HasAnswers => Answers != null;
 
 
 
 	}
+	public class Sprite
+	{
+		public string Name;
+		public float Scale = 1f;
+	}
 
 	public class Answer
 	{
-		public string Text;
-		public int NextMessage = -1;
-		public List<int> Events;
+		public string Text;//
+		public int NextMessage = -1;//
+		public List<int> Events;//
 	}
 }

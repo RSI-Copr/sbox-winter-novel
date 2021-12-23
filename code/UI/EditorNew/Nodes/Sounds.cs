@@ -29,10 +29,10 @@ namespace TerryNovel.Editor
 			set => selector.Value = value;
 		}
 
-		private readonly FileSelector selector;
+		private readonly StringSelector selector;
 		public MusicNode()
 		{
-			selector = Canvas.AddChild<FileSelector>();
+			selector = Canvas.AddChild<StringSelector>();
 			selector.Finder = () => FileSystem.Mounted.FindFile( "assets/music/", "*.sound" );
 		}
 		public NovelEvent GenerateEvent()
@@ -60,10 +60,10 @@ namespace TerryNovel.Editor
 			set => selector.Value = value;
 		}
 
-		private readonly FileSelector selector;
+		private readonly StringSelector selector;
 		public SoundNode()
 		{
-			selector = Canvas.AddChild<FileSelector>();
+			selector = Canvas.AddChild<StringSelector>();
 			selector.Finder = () => FileSystem.Mounted.FindFile( "assets/sounds/", "*.sound" );
 		}
 		public NovelEvent GenerateEvent()

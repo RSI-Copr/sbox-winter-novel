@@ -24,5 +24,12 @@ namespace TerryNovel.Editor
 			Render.UI.Box( new Rect( pos1.x + half_t, y + half_t, t, h + half_t ), col );
 			Render.UI.Box( new Rect( x + half_t, pos2.y + half_t, w + half_t, t ), col );
 		}
+
+		public static void Draw( Vector2 pos1, Vector2 pos2, Color col, float t = 10f )
+		{
+			var vb = Render.GetDynamicVB();
+			vb.AddQuad( Vector3.Zero, new Vector3( 100, 0 ), new Vector3( 0, 100 ), new Vector3( 100, 100 ) );
+				
+		}
 	}
 }

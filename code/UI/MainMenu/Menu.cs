@@ -15,6 +15,16 @@ namespace TerryNovel
 			
 		}
 
+		public void Startnovel()
+		{
+
+		}
+
+		public void ShowAbout()
+		{
+			Frame.Show<AboutFrame>( true );
+		}
+
 		public void ShowEditor()
 		{
 			EditorWindow.Open();
