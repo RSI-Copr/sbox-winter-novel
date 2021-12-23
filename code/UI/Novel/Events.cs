@@ -12,6 +12,9 @@ namespace TerryNovel
 	public class NovelEvent:LibraryClass
 	{
 		public string[] arguments;
+
+		public NovelEvent() { }
+
 		public NovelEvent( params string[] args )
 		{
 			arguments = args;

@@ -50,9 +50,9 @@ namespace TerryNovel
 
 		}
 
-		public static void LoadFromFile( string filename )
+		public static void LoadFromFile(BaseFileSystem fs, string filename )
 		{
-			using var filestream = FS.OpenRead( filename );
+			using var filestream = fs.OpenRead( filename );
 			using var reader = new BinaryReader( filestream );
 
 
