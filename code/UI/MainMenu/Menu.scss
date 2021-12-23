@@ -32,7 +32,7 @@ MainMenu .button {
     border-radius: 100px;
     color: #95aad2;
     z-index: 3;
-    text-shadow: 1px 0 1px white, 0 1px 1px white, -1px 0 1px white, 0 -1px 1px white;
+    text-stroke: 4px white;
 
 
 
@@ -120,12 +120,14 @@ MainMenu .button {
         margin-left: 2%;
         margin-top: 2%;
         font-size: 48px;
+        text-stroke: 7px white;
     }
 
     .start {
         margin-left: 41%%;
         margin-top: 2%;
         font-size: 48px;
+        text-stroke: 7px white;
     }
 }
 
