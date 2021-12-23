@@ -96,11 +96,11 @@ namespace TerryNovel
 				if( Novel.ReadInfo( fileSystem, file, out var name, out var desc ) )
 				{
 					var entry = new NovelEntry( fileSystem, dir, name, desc );
-					entry.AddEventListener( "onclick", () => Novel.LoadFromFile( fileSystem, file ) );
 					List.AddChild( entry );
 				}
 			}
 		}
+
 
 
 		public class NovelEntry : Panel
@@ -116,17 +116,24 @@ namespace TerryNovel
 
 				var f_name = $"{dir}/preview.png";
 
+				Log.Info( f_name );
+
 				var img_canvas = Add.Panel( "img-canvas" );
 
-				if (fileSystem == FileSystem.Mounted && fileSystem.FileExists( name ) )
+				if (fileSystem.FileExists( name ) )
 				{
-					img_canvas.Add.Image( f_name );
+					img_canvas.Add.Image( Novel.LoadTexture( fileSystem, f_name) );
 				}
 				else
 				{
 					img_canvas.Add.Image( "UI/background-grid.png" );
 				}
 
+				
+			}
+
+			protected override void OnClick( MousePanelEvent e )
+			{
 				
 			}
 

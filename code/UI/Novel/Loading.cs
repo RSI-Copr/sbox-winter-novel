@@ -9,6 +9,7 @@ using Sandbox.UI.Construct;
 using System.IO;
 using TerryNovel.Editor;
 
+
 namespace TerryNovel
 {
 	partial class Novel
@@ -25,9 +26,9 @@ namespace TerryNovel
 		{
 			foreach ( var dir in fs.FindDirectory( directory ) )
 			{
-				var filename = fs.FindFile( $"{directory}\\{dir}", "*.novel" ).FirstOrDefault();
+				var filename = fs.FindFile( $"{directory}/{dir}", "*.novel" ).FirstOrDefault();
 				if ( filename == null ) continue;
-				yield return $"{directory}\\{dir}\\{filename}";
+				yield return $"{directory}/{dir}/{filename}";
 			}
 		}
 
@@ -49,7 +50,6 @@ namespace TerryNovel
 			return true;
 
 		}
-
 		public static void LoadFromFile(BaseFileSystem fs, string filename )
 		{
 			using var filestream = fs.OpenRead( filename );
@@ -144,6 +144,26 @@ namespace TerryNovel
 		}
 
 
-		
+		public static Texture LoadTexture( BaseFileSystem filesystem, string filename, bool warnOnMissing = true )
+		{
+			filename = FileSystem.NormalizeFilename( filename );
+			try
+			{
+				using Stream stream = FileSystem.Mounted.OpenRead( filename );
+				return Sandbox.TextureLoader.Image.Load( stream );
+			}
+			catch ( Exception e )
+			{
+				if ( warnOnMissing )
+				{
+					Log.Warning( $"Image.Load: {filename} not found ({e.Message})" );
+				}
+			}
+
+			return null;
+		}
+
+
+
 	}
 }

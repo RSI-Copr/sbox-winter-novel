@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Sandbox;
+using System;
 using System.Collections.Generic;
+
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace TerryNovel.Editor
 {
@@ -38,5 +41,8 @@ namespace TerryNovel.Editor
 		}
 
 		public static NovelInfo Info { get; set; }
+
+
+		
 	}
 }

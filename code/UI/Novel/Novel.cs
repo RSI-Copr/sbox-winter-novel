@@ -88,12 +88,13 @@ namespace TerryNovel
 			{
 				RootPanel = new();
 			}
+			Sprites.Clear();
 			RootPanel.SetVisible( true );
 			Info = info;
 			info.RunEvents();
 			CurrentMessageId = 0;
 			ShowMessage();
-			Sprites.Clear();
+			
 		}
 		private static void ShowMessage()
 		{
@@ -247,7 +248,7 @@ namespace TerryNovel
 			{
 				foreach(var img in sprites.Values )
 				{
-					img.Delete( true );				
+					img?.Delete( true );				
 				}
 				sprites.Clear();
 			}
@@ -257,9 +258,11 @@ namespace TerryNovel
 				if(spriteEvent == SpriteEventType.Delete )
 				{
 					sprites.GetValueOrDefault( id )?.Delete();
+					sprites.Remove( id );
 					return;
 				}
 
+				if ( sprites.ContainsKey( id ) ) return;
 				
 
 				var sprite = Info.Sprites[id];

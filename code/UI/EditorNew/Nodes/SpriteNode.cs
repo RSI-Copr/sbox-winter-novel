@@ -98,8 +98,8 @@ namespace TerryNovel.Editor
 		private SpriteSelector selector;
 		public int SpriteId =-1;
 
-		private DropDown spawntype;
-		private DropDown camefrom;
+		private EnumSelector<SpriteEventType> spawntype;
+		private EnumSelector<SpriteComeFrom> camefrom;
 		
 
 	    public SpriteEventNode()
@@ -107,22 +107,25 @@ namespace TerryNovel.Editor
 			selector = Canvas.AddChild<SpriteSelector>();
 			selector.OnSelect = ( id ) => SpriteId = id;
 
-			spawntype = Canvas.AddChild<DropDown>();
-			spawntype.SetPropertyObject( "value", SpriteEventType.Spawn );
-
-			camefrom = Canvas.AddChild<DropDown>();
-			camefrom.SetPropertyObject( "value", SpriteComeFrom.Center );
+			spawntype = Canvas.AddChild<EnumSelector<SpriteEventType>>();
+		
+			camefrom = Canvas.AddChild<EnumSelector<SpriteComeFrom>>();
+			camefrom.Value = SpriteComeFrom.Center;
 
 		}
 
 		public override void Write( BinaryWriter writer )
 		{
 			writer.Write( SpriteId );
+			writer.Write( (int)spawntype.Value );
+			writer.Write( (int)camefrom.Value );
 		}
 
 		public override void Read( BinaryReader reader )
 		{
 			SpriteId = reader.ReadInt32();
+			spawntype.Value = (SpriteEventType)reader.ReadInt32();
+			camefrom.Value = (SpriteComeFrom)reader.ReadInt32();
 		}
 
 		public NovelEvent GenerateEvent()
@@ -133,8 +136,8 @@ namespace TerryNovel.Editor
 			{
 				arguments = new string[]{ 
 					Editor.Sprites.GetSpriteGeneratedId( SpriteId ).ToString(),
-					spawntype.Value,
-					camefrom.Value,
+					spawntype.StringValue,
+					camefrom.StringValue,
 				}
 			};
 		}
@@ -179,8 +182,49 @@ namespace TerryNovel.Editor
 				}
 			}
 		}
+
+
+
 	}
 
-	
+	public class EnumSelector<T> : PopupButton where T: struct,Enum
+	{
+		private T value;
+		public T Value
+		{
+			get => value;
+			set
+			{
+				Text = value.ToString();
+				this.value = value;
+			}
+
+		}
+
+		public new string StringValue => Value.ToString();
+		
+		public EnumSelector()
+		{
+			AddClass( "dropdown" );
+			Add.Icon( "expand_more", "dropdown_indicator" );
+
+			Value = Enum.GetValues<T>().First();
+		}
+		public override void Open()
+		{
+			Popup = new Popup( this, Popup.PositionMode.BelowStretch, 0.0f );
+			Popup.AddClass( "flat-top" );
+
+			foreach ( var file in Enum.GetValues<T>() )
+			{
+				if ( file.Equals(Value) ) continue;
+
+				var o = Popup.AddOption( file.ToString(), () => Value = file );
+
+			}
+		}
+
+	}
+
 
 }

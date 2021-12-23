@@ -1,4 +1,5 @@
-﻿using Sandbox.UI;
+﻿using Sandbox;
+using Sandbox.UI;
 using Sandbox.UI.Construct;
 
 public static class UIExt
@@ -48,5 +49,19 @@ public static class UIExt
 	{
 		return pnl.Parent != null;
 	}
+	public static Image Image( this PanelCreator self, Texture texture = null, string classname = null )
+	{
+		Image control = self.panel.AddChild<Image>();
+		if ( texture != null )
+		{
+			control.Texture= texture;
+		}
+		if ( classname != null )
+		{
+			control.AddClass( classname );
+		}
+		return control;
+	}
+
 }
 
