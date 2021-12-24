@@ -19,13 +19,14 @@ namespace TerryNovel
 
 		public static int CurrentMessageId { get; set; } = 0;
 		private static Message CurrentMessage;
-
+		private static bool Waiting = false;
+		private static bool Ended = false;
 
 		private static TextCanvas Canvas;
 		private static AnswersCanvas Answers;
 		private static Panel BlackScreen;
 		private static SpritesCanvas Sprites;
-
+		
 
 		public Novel()
 		{
@@ -48,34 +49,73 @@ namespace TerryNovel
 
 		protected override void OnClick( MousePanelEvent e )
 		{
-			if ( Canvas.IsTyping )
-			{
-				Canvas.SpeedRun();
-				return;
-			}
-
-			if(CurrentMessage?.HasAnswers ?? false)
-			{
-				return;
-			}
-
-			ShowMessage();
+			Click();
 		}
 		public override void OnButtonEvent( ButtonEvent e )
 		{
 			base.OnButtonEvent( e );
 			if ( e.Button == "escape" )
 			{
-				this.SetVisible( false );
-				Music.Pause(true);
+				Hide();
 			}
 		}
+		public static void EndGameAndWait()
+		{
+			
+			Canvas.SetVisible( false );
+			Ended = true;
+		}
+
+		public static void HideHudAndWait()
+		{
+			Canvas.SetVisible( false );
+			Waiting = true;
+		}
+
+
+		public void Click()
+		{
+			if( Ended )
+			{
+				return;
+			}
+
+			if ( Canvas.IsTyping )
+			{
+				Canvas.SpeedRun();
+				return;
+			}
+
+			if ( CurrentMessage?.HasAnswers ?? false )
+			{
+				return;
+			}
+
+			if( Waiting )
+			{
+				Canvas.SetVisible( true );
+				Waiting = false;
+				return;
+			}
+
+			ShowMessage();
+		}
+
 
 		public static void Show()
 		{
+			RootPanel.Focus();
 			RootPanel.SetVisible( true );
 			Music.Pause( false );
 		}
+
+		public static void Hide()
+		{
+			RootPanel.SetVisible( false );
+			Music.Pause( true );
+		}
+
+
 		public static void SetBlack(bool value )
 		{
 			
@@ -91,10 +131,14 @@ namespace TerryNovel
 			}
 			Sprites.Clear();
 			RootPanel.SetVisible( true );
-			
+			Canvas.SetVisible( true );
+			Waiting = false;
+			Ended = false;
 			Info = info;
 			CurrentMessageId = 0;
+			CurrentMessage = null;
 			info.RunEvents();
+			
 			ShowMessage();
 			
 		}
@@ -102,11 +146,13 @@ namespace TerryNovel
 		{
 			if ( CurrentMessageId == -1 )
 			{
-				RootPanel.SetVisible( false );
+				EndGameAndWait();
 				return;
 			}
 
 			Info.RunMessageEvents( CurrentMessage );
+			
+
 
 			var msg = Info.Messages[CurrentMessageId];
 			CurrentMessage = msg;
@@ -115,7 +161,7 @@ namespace TerryNovel
 			Canvas.SetCharacter( msg.Character );
 			
 			CurrentMessageId = msg.NextMessage;
-			Log.Info( CurrentMessageId );
+			//Log.Info( CurrentMessageId );
 		}
 		private static void OnTextComplete()
 		{
@@ -163,7 +209,7 @@ namespace TerryNovel
 		
 		class TextCanvas : Panel
 		{
-			public const float Speed = 0.025f;
+			public const float Speed = 0.020f;
 			public readonly Label Label;
 			public readonly Label CharLabel;
 
@@ -263,7 +309,7 @@ namespace TerryNovel
 				sprite.Style.SetBackgroundImage( $"assets/textures/{Info.Sprites[id].Name}" );
 
 				
-				Log.Info( spriteCome );
+				//Log.Info( spriteCome );
 				switch ( spriteCome )
 				{
 					case SpriteComeFrom.Left:

@@ -101,6 +101,7 @@ MainMenu .button {
             min-height: 50px;
             font-size: 31px;
             background-color: #95aad2;
+           
 
             .label {
                 width: 100%;
@@ -122,7 +123,8 @@ MainMenu .button {
             text-stroke: 7px white;
 
             &.disabled {
-               opacity:0.5;
+                opacity: 0.5;
+                pointer-events: none;
             }
         }
     }
@@ -182,6 +184,7 @@ MainMenu .button {
     }
 
     &.selected {
+        
         pointer-events: none;
     }
 }

@@ -42,11 +42,14 @@ Novel {
         padding: 10px;
         background-color: rgba(148 168 209,0.8);
         border-radius: 20px;
-        border: 8px solid rgba(39 62 128,0.8);
+        border: 8px solid rgba(100 127 205,0.8);
         width: 70%;
         align-items: center;
         justify-content: center;
         flex-direction: column;
+        //background-image: url( /ui/mainmenu/snow.png );
+        background-repeat:repeat;
+     
 
         .character-label {
             font-size: 40px;
@@ -74,6 +77,7 @@ Novel {
         &.hidden {
             background-color: transparent;
             border-color: transparent;
+            background-image:none;
 
             .label {
                 text-stroke-color: transparent;

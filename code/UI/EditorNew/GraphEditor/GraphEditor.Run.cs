@@ -56,7 +56,7 @@ namespace TerryNovel.Editor
 			{
 				if ( node is IEventNode ev )
 				{
-				Log.Info($"Добален ивент на старт  {ev}");
+			//	Log.Info($"Добален ивент на старт  {ev}");
 				Info.StartEvents.Add(Info.AddEvent( ev ));
 				}
 				else
@@ -94,7 +94,7 @@ namespace TerryNovel.Editor
 
 		private Message ParseMessage( MessageNode msg_node )
 		{
-			Log.Info( $"Парсится сообщение {msg_node}" );
+			//Log.Info( $"Парсится сообщение {msg_node}" );
 			Message first = null;
 
 			foreach(var entry in msg_node.Messages )
@@ -110,7 +110,7 @@ namespace TerryNovel.Editor
 				msg.Text = entry.Text;
 
 
-				Log.Info( $"Добавлена линия текста {(text.Length > 5 ? text[..5] + "..." : text) }" );
+				//Log.Info( $"Добавлена линия текста {(text.Length > 5 ? text[..5] + "..." : text) }" );
 				
 				if ( PreviousMessage != null )
 				{
@@ -148,7 +148,7 @@ namespace TerryNovel.Editor
 				{
 					if ( node is IEventNode ev )
 					{
-						Log.Info( $"к ней добавлен ивент {ev}" );
+						//Log.Info( $"к ней добавлен ивент {ev}" );
 						msg.Events.Add( Info.AddEvent( ev.GenerateEvent() ) );
 					}
 					if ( !entry.IsLast ) continue;
@@ -170,7 +170,7 @@ namespace TerryNovel.Editor
 
 		private void ParseAnswer( AnswerNode answer_node )
 		{
-			Log.Info( $"Парсится группа ответов {answer_node}" );
+			//Log.Info( $"Парсится группа ответов {answer_node}" );
 
 			var msg = PreviousMessage;
 
@@ -178,7 +178,7 @@ namespace TerryNovel.Editor
 			
 			foreach (var entry in answer_node.Answers )
 			{
-				Log.Info( $"Парсится ответ {entry.Text}" );
+				//Log.Info( $"Парсится ответ {entry.Text}" );
 				PreviousMessage = null;
 				var answer = new Answer()
 				{
@@ -198,7 +198,7 @@ namespace TerryNovel.Editor
 
 			foreach(var ev in output.NextNodes.OfType<IEventNode>() )
 			{
-				Log.Info( $"к нему добавлен ивент {ev}" );
+				//Log.Info( $"к нему добавлен ивент {ev}" );
 				list.Add( Info.AddEvent( ev ) );
 			}
 			return list;

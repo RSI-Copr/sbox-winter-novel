@@ -85,15 +85,6 @@ namespace TerryNovel.Editor
 			return node;
 		}
 
-		[ClientCmd("node_debug")]
-		private static void DebugNodes()
-		{
-			foreach(var node in BaseNode.All )
-			{
-				Log.Info( $"{node} {node.Id}" );
-			}
-		}
-		
 		private void CreateDefault()
 		{
 			CreateNode<InfoNode>();
@@ -191,14 +182,24 @@ namespace TerryNovel.Editor
 			FieldMoving = value;
 		}
 
-		
+		public override void OnButtonTyped( string button, KeyModifiers km )
+		{
+
+		    if(button == "s" && km.Ctrl )
+			{
+				GenerateSaveFile();
+			}
+
+
+			base.OnButtonTyped( button, km );
+		}
 
 
 		private Vector2 NodeMoveOffset;
 		private BaseNode CurNode;
 		protected override void OnMouseDown( MousePanelEvent e )
 		{
-			OptionsPanel.CloseAll();
+			
 
 			if ( e.Target is PlugOut pnl && e.Button == "mouseleft" )
 			{
@@ -289,6 +290,8 @@ namespace TerryNovel.Editor
 			{
 				Lines.DrawBroken( CurPlug.GetScreenPosition(), Mouse.Position, FindPanelsUnderMouse().Any( p => p is PlugIn ) ? Color.Yellow : Color.Red );
 			}
+			
+			//Lines.Draw( default, default, default, default );
 
 			foreach ( var con in Connection.All )
 			{

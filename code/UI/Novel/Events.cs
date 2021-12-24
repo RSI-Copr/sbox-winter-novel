@@ -52,6 +52,21 @@ namespace TerryNovel
 		public NovelEvent GenerateEvent();
 	}
 
+	public class HideHudEvent : NovelEvent {
+
+		public override void Call( params string[] args )
+		{
+			Novel.HideHudAndWait();
+		}
+	}
+	public class GameEndEvent : NovelEvent
+	{
+
+		public override void Call( params string[] args )
+		{
+			Novel.EndGameAndWait();
+		}
+	}
 
 	public class BackGroundChangeEvent : NovelEvent
 	{
@@ -65,7 +80,6 @@ namespace TerryNovel
 			Novel.SetBackground( args[0] );
 		}
 	}
-
 	public class MusicPlayEvent : NovelEvent
 	{
 		public MusicPlayEvent() { }
@@ -78,7 +92,6 @@ namespace TerryNovel
 			Music.Set(args[0]);
 		}
 	}
-
 	public class SoundPlayEvent : NovelEvent
 	{
 		public SoundPlayEvent( string name )
@@ -87,11 +100,10 @@ namespace TerryNovel
 		}
 		public override void Call( params string[] args )
 		{
-			Log.Info( args[0] );
+			//Log.Info( args[0] );
 			Sound.FromScreen( args[0] );
 		}
 	}
-
 	public class MusicStopEvent : NovelEvent
 	{
 
@@ -113,7 +125,6 @@ namespace TerryNovel
 			Novel.SetBlack( args[0].ToBool() );
 		}
 	}
-
 	public class SpriteEvent : NovelEvent
 	{
 		

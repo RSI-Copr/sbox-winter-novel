@@ -1,13 +1,24 @@
 @import "Frame.scss";
 
-AboutFrame {
-    min-width: 50%;
-    min-height: 40%;
+.AboutFrame {
+    width: 50%;
+    height: 40%;
     margin-left: 35%;
     margin-top: 20%;
+    background-color: rgb(148 168 209);
 
     .canvas {
-        font-size: 36px;
-        overflow:scroll;
+        color: white;
+        font-size: 20px;
+        
+    }
+
+    .header {
+        color: white;
+        font-weight: bold;
+        box-shadow: 0 2px 2px black;
+        height: 25px;
+        width: 100%;
+        background-color: rgb(100 127 205);
     }
 }

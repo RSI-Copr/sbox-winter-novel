@@ -37,7 +37,7 @@ namespace TerryNovel.Editor
 				CurrentId++;
 			}
 
-			Log.Info( $"{this} {Id} {AutoIdAssignment}" );
+			//Log.Info( $"{this} {Id} {AutoIdAssignment}" );
 
 			Node = node;
 			AddClass( "plug" );

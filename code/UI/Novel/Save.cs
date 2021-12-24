@@ -25,7 +25,7 @@ namespace TerryNovel
 			writer.Write( DateTime.Now.ToBinary() );
 			writer.Write( CurrentMessageId );
 			
-
+			
 
 		}
 	}

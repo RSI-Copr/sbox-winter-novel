@@ -61,7 +61,16 @@ namespace TerryNovel.Editor
 		}
 	}
 
+	[Node( Title = "Hide hud", Group = "Events", HasOutput = false )]
+	public class HideHudNode : BaseNode, IEventNode
+	{
+		
+		public NovelEvent GenerateEvent()
+		{
+			return new HideHudEvent();
+		}
 
+	}
 
 	public class StringSelector : PopupButton
 	{

@@ -43,12 +43,12 @@ namespace TerryNovel.Editor
 
 			public void OnChanged(FileWatch watch)
 			{
-				Log.Info( watch.watchFiles );
+				//Log.Info( watch.watchFiles );
 			}
 
 			public void OnFileChanged(string file )
 			{
-				Log.Info( file );
+				//Log.Info( file );
 			}
 
 		}
