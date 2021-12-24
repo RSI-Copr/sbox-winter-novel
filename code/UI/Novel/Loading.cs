@@ -38,7 +38,7 @@ namespace TerryNovel
 			desc = null;
 
 			
-			var filename = $"{dir}/.novel";
+			var filename = $"{dir}/novel";
 		
 			if ( !fs.FileExists( filename ) ) return false;
 			using var filestream = fs.OpenRead( filename );
@@ -68,7 +68,7 @@ namespace TerryNovel
 			}
 			FolderName = f_name;
 
-			using var filestream = fs.OpenRead( $"{dir}.novel" );
+			using var filestream = fs.OpenRead( $"{dir}novel" );
 			using var reader = new BinaryReader( filestream );
 
 

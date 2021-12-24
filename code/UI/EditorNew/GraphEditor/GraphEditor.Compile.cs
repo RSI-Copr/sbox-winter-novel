@@ -22,7 +22,7 @@ namespace TerryNovel.Editor
 			info.Name = infoNode.Title;
 			info.Description = infoNode.Desc;
 
-			using var file_stream = FileSystem.Data.OpenWrite( $"novels/{Editor.Dir.Name}/.novel" );
+			using var file_stream = FileSystem.Data.OpenWrite( $"novels/{Editor.Dir.Name}/novel" );
 			using var writer = new BinaryWriter( file_stream );
 
 			writer.Write( info.Name );
