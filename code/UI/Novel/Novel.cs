@@ -12,7 +12,7 @@ namespace TerryNovel
 	public partial class Novel : Panel
 	{
 
-		public static string ProtagonistName { get; set; } = "Insert name here";
+		public static string ProtagonistName => Local.DisplayName;
 		public static Novel RootPanel { get; private set; }
 		public static NovelInfo Info { get; private set; }
 		public static string FolderName { get; set; }
@@ -23,7 +23,6 @@ namespace TerryNovel
 
 		private static TextCanvas Canvas;
 		private static AnswersCanvas Answers;
-		private static CharacterInfo Character;
 		private static Panel BlackScreen;
 		private static SpritesCanvas Sprites;
 
@@ -33,16 +32,15 @@ namespace TerryNovel
 			RootPanel = this;
 			this.LoadDefaultStyleSheet();
 
-			BlackScreen = Add.Panel( "black" );
+			
 			Sprites = AddChild<SpritesCanvas>();
 			Answers = AddChild<AnswersCanvas>();
-			Character = Add.Panel( "character-canvas" ).AddChild<CharacterInfo>();
+			BlackScreen = Add.Panel( "black" );
 			Canvas = Add.Panel( "canvas" ).AddChild<TextCanvas>();
 			
-			Canvas.OnTextShown = OnTextComplete;
-
 			
-
+			Canvas.OnTextShown = OnTextComplete;
+			
 			AcceptsFocus = true;
 			Focus();
 		}
@@ -80,7 +78,10 @@ namespace TerryNovel
 		}
 		public static void SetBlack(bool value )
 		{
+			
+			BlackScreen.SetClass( "smooth", CurrentMessageId != 0 );
 			BlackScreen.Style.Opacity = value ? 1 : 0;
+			Canvas.SetClass( "hidden", value );
 		}
 		public static void Start( NovelInfo info )
 		{
@@ -90,9 +91,10 @@ namespace TerryNovel
 			}
 			Sprites.Clear();
 			RootPanel.SetVisible( true );
+			
 			Info = info;
-			info.RunEvents();
 			CurrentMessageId = 0;
+			info.RunEvents();
 			ShowMessage();
 			
 		}
@@ -110,9 +112,8 @@ namespace TerryNovel
 			CurrentMessage = msg;
 			Canvas.Print( msg.Text );
 			Answers.Clear();
+			Canvas.SetCharacter( msg.Character );
 			
-			Character.Set( msg.Character );
-
 			CurrentMessageId = msg.NextMessage;
 			Log.Info( CurrentMessageId );
 		}
@@ -125,9 +126,9 @@ namespace TerryNovel
 		}
 		public static void SetBackground( string image )
 		{
-		
 			//Texture.CreateArray().Finish( data: FS.ReadAllBytes( $"novels/{FolderName}/backgrounds/{image}" ).ToArray() );
 			RootPanel.Style.SetBackgroundImage($"assets/backgrounds/{image}");
+			SetBlack( false );
 		}
 		public static void SetText( string name )
 		{
@@ -136,34 +137,6 @@ namespace TerryNovel
 		public static void RunSpriteEvent(int id, SpriteEventType spriteEvent, SpriteComeFrom spriteCome )
 		{
 			Sprites.DoSprite( id, spriteEvent, spriteCome );
-		}
-
-
-
-	    class CharacterInfo : Panel
-		{
-			private Label Label;
-
-			public CharacterInfo()
-			{
-				Label = Add.Label();
-			}
-			public void Set(int id )
-			{
-				if(id == -1 )
-				{
-					this.SetVisible( false );
-					Canvas.Style.BorderTopLeftRadius = Length.Pixels( 25 );
-					
-				}
-				else
-				{
-					this.SetVisible( true );
-					Label.Text = id == -2 ? ProtagonistName : Info.Characters[id];
-					Canvas.Style.BorderTopLeftRadius = 0;
-				}
-				
-			}
 		}
 		
 		class AnswersCanvas:Panel
@@ -190,8 +163,9 @@ namespace TerryNovel
 		
 		class TextCanvas : Panel
 		{
-			public const float Speed = 0.05f;
+			public const float Speed = 0.025f;
 			public readonly Label Label;
+			public readonly Label CharLabel;
 
 			private string buffer;
 			private RealTimeSince LastCharAdd;
@@ -202,7 +176,24 @@ namespace TerryNovel
 
 			public TextCanvas()
 			{
-				Label = AddChild<Label>();
+				CharLabel = AddChild<Label>( "character-label" );
+				Label = AddChild<Label>("message-label");
+			}
+
+
+			public void SetCharacter( int id )
+			{
+				if ( id == -1 )
+				{
+					CharLabel.Style.Opacity = 0;
+
+				}
+				else
+				{
+					CharLabel.Style.Opacity = 1;
+					CharLabel.Text = id == -2 ? ProtagonistName : Info.Characters[id];
+				}
+
 			}
 
 			public void Print(string text)
@@ -239,7 +230,7 @@ namespace TerryNovel
 
 		class SpritesCanvas:Panel
 		{
-			private Dictionary<int, Image> sprites = new();
+			private Dictionary<int, Panel> sprites = new();
 			public SpritesCanvas()
 			{
 
@@ -265,20 +256,25 @@ namespace TerryNovel
 				if ( sprites.ContainsKey( id ) ) return;
 				
 
-				var sprite = Info.Sprites[id];
-				var img = Add.Image( $"assets/textures/{sprite.Name}","sprite" );
+				
+
+				var sprite = Add.Panel( "sprite" );
+				//sprite.Style.SetBackgroundImage(Novel.LoadTexture( CurrentFileSystem ,)
+				sprite.Style.SetBackgroundImage( $"assets/textures/{Info.Sprites[id].Name}" );
+
+				
 				Log.Info( spriteCome );
 				switch ( spriteCome )
 				{
 					case SpriteComeFrom.Left:
-						img.AddClass( "from-left" );
+						sprite.AddClass( "from-left" );
 						break;
 					case SpriteComeFrom.Rigth:
-						img.AddClass( "from-right" );
+						sprite.AddClass( "from-right" );
 						break;
 				}
 
-				sprites.Add( id, img );
+				sprites.Add( id, sprite );
 			}
 		}
 	}

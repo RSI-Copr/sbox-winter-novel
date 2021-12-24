@@ -14,29 +14,32 @@ namespace TerryNovel
 {
 	partial class Novel
 	{
+		public static BaseFileSystem CurrentFileSystem { get; set; }
 
 		public const string Directory = "novels";
 		public static BaseFileSystem FS => FileSystem.Data;
 
 		public static void CreateDir()
 		{
-			FS.CreateDirectory( Directory );
+			FS.CreateDirectory( "novels" );
+			FS.CreateDirectory( "saves" );
 		}
 		public static IEnumerable<string> FindAll(BaseFileSystem fs, string directory )
 		{
 			foreach ( var dir in fs.FindDirectory( directory ) )
 			{
-				var filename = fs.FindFile( $"{directory}/{dir}", "*.novel" ).FirstOrDefault();
-				if ( filename == null ) continue;
-				yield return $"{directory}/{dir}/{filename}";
+				yield return $"{directory}/{dir}/";
 			}
 		}
 
-		public static bool ReadInfo( BaseFileSystem fs, string filename, out string name, out string desc)
+		public static bool ReadInfo( BaseFileSystem fs, string dir, out string name, out string desc)
 		{
 			name = null;
 			desc = null;
 
+			
+			var filename = $"{dir}/.novel";
+		
 			if ( !fs.FileExists( filename ) ) return false;
 			using var filestream = fs.OpenRead( filename );
 			using var reader = new BinaryReader( filestream );
@@ -50,9 +53,22 @@ namespace TerryNovel
 			return true;
 
 		}
-		public static void LoadFromFile(BaseFileSystem fs, string filename )
+		public static void LoadFrom(BaseFileSystem fs, string dir )
 		{
-			using var filestream = fs.OpenRead( filename );
+			var f_name = dir;
+			if( f_name[^1] == '/' )
+			{
+				f_name = f_name.Remove( f_name.Length - 1 );
+			}
+
+			int indx = f_name.LastIndexOf( '/' );
+			if(indx != -1 )
+			{
+				f_name = f_name.Remove( 0,indx+1 );
+			}
+			FolderName = f_name;
+
+			using var filestream = fs.OpenRead( $"{dir}.novel" );
 			using var reader = new BinaryReader( filestream );
 
 
@@ -109,7 +125,7 @@ namespace TerryNovel
 
 					for ( int j = 0; j < args_count; j++ )
 					{
-						ev.arguments[i] = reader.ReadString();
+						ev.arguments[j] = reader.ReadString();
 					}
 
 				}
@@ -149,7 +165,7 @@ namespace TerryNovel
 			filename = FileSystem.NormalizeFilename( filename );
 			try
 			{
-				using Stream stream = FileSystem.Mounted.OpenRead( filename );
+				using Stream stream = filesystem.OpenRead( filename );
 				return Sandbox.TextureLoader.Image.Load( stream );
 			}
 			catch ( Exception e )

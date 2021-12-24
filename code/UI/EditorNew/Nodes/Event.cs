@@ -34,7 +34,7 @@ namespace TerryNovel.Editor
 		
 		public override void Write( BinaryWriter writer )
 		{
-			writer.Write( Name );
+			writer.Write( Name ?? "" );
 			
 		}
 		public override void Read( BinaryReader reader )

@@ -21,37 +21,63 @@ Novel {
         pointer-events: none;
         background-color: black;
         opacity: 0;
-        transition: all 1s ease-out;
+
+
+        &.smooth {
+            transition: all 0.2s ease-out;
+        }
     }
 
     .canvas {
         justify-content: center;
-        bottom: 0;
+        bottom: 1%;
         width: 100%;
-        min-height: 20%;
+        height: 35%;
         //background-color: red;
+        z-index: 1;
     }
+
 
     TextCanvas {
         padding: 10px;
-        background-color: rgba(black,0.8);
-        border-radius: 10px;
-        border: 5px solid rgba(black,0.8);
+        background-color: rgba(148 168 209,0.8);
+        border-radius: 20px;
+        border: 8px solid rgba(39 62 128,0.8);
         width: 70%;
-        backdrop-filter: blur( 20px );
         align-items: center;
         justify-content: center;
-        border-top-left-radius: 0;
+        flex-direction: column;
+
+        .character-label {
+            font-size: 40px;
+            height: 20%;
+            margin-left: 2%;
+            text-stroke: 7px rgb(100 127 205);
+        }
+
+        .message-label {
+            margin-top: 1%;
+            height: 80%;
+            margin-left: 5%;
+            font-size: 36px;
+            text-stroke: 5px rgb(100 127 205);
+        }
 
 
-        label {
+        .label {
             width: 100%;
-            height: 100%;
             color: white;
             font-family: Arial;
-            font-size: 23px;
             font-weight: 400;
-            z-index: 11;
+        }
+
+        &.hidden {
+            background-color: transparent;
+            border-color: transparent;
+
+            .label {
+                text-stroke-color: transparent;
+            }
         }
     }
 
@@ -63,7 +89,7 @@ Novel {
         justify-content: center;
         align-items: center;
         // transition: all 0.3s ease-out;
-
+        z-index: 2;
 
         .button {
             border: 1px solid black;
@@ -86,29 +112,8 @@ Novel {
         }
     }
 
-    .character-canvas {
-        //background-color: yellow;
-        width: 70%;
-        min-height: 5%;
-    }
-
-    CharacterInfo {
-        border-radius: 10px;
-        min-width: 20%;
-        height: 100%;
-        // background-color: green;
-        background-color: rgba(black,0.8);
-        border: 5px solid rgba(black,0.8);
-        border-bottom: 0;
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
-        justify-content: center;
-        align-items: center;
-        font-size: 30px;
-    }
-
     SpritesCanvas {
-       // background-color: red;
+        // background-color: red;
         justify-content: center;
         position: absolute;
         width: 100%;
@@ -121,22 +126,22 @@ Novel {
             height: 100%;
             background-position: center bottom;
             background-repeat: no-repeat;
-            background-size:contain;
-            
+            background-size: contain;
             opacity: 1;
             transition: all 0.5s ease-out;
             left: 0;
             right: 0;
+            // background-color:red;
 
             &:intro {
                 opacity: 0;
 
                 &.from-left {
-                    left: -20%;
+                    right: 20%;
                 }
 
                 &.from-right {
-                    right: -20%;
+                    right: 20%;
                 }
             }
 

@@ -18,7 +18,7 @@ namespace TerryNovel.Editor
 			public string Name { get; set; }
 			public string Backgrounds => Current + "/backgrounds/";
 			public string Sounds => Current + "/sounds";
-			public string ProjectFile => Current + "/.novel_project";
+			public string ProjectFile => Current + "/novel_project";
 			
 
 			public void CreateAll()

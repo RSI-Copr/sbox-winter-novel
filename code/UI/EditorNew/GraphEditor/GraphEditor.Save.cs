@@ -75,7 +75,7 @@ namespace TerryNovel.Editor
 
 		private void Load( string name )
 		{
-			var file = $"novels/{name}/.novel_project";
+			var file = $"novels/{name}/novel_project";
 
 
 			if ( !FS.FileExists( file ) )

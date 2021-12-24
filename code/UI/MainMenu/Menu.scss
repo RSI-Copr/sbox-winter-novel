@@ -114,20 +114,27 @@ MainMenu .button {
     .buttons {
         min-height: 15%;
         border-top: 5px solid #95aad2;
+
+
+
+        .button {
+            font-size: 48px;
+            text-stroke: 7px white;
+
+            &.disabled {
+               opacity:0.5;
+            }
+        }
     }
 
     .back {
         margin-left: 2%;
         margin-top: 2%;
-        font-size: 48px;
-        text-stroke: 7px white;
     }
 
     .start {
         margin-left: 41%%;
         margin-top: 2%;
-        font-size: 48px;
-        text-stroke: 7px white;
     }
 }
 
@@ -135,6 +142,10 @@ MainMenu .button {
     &:not(:last-child) {
         border-bottom: 5px solid white;
     }
+
+    pointer-events: all;
+    cursor:pointer;
+
 
     background-color: rgb(148 168 209);
     min-height: 300px;
@@ -168,5 +179,9 @@ MainMenu .button {
 
     .img-canvas {
         width: 60%;
+    }
+
+    &.selected {
+        pointer-events: none;
     }
 }

@@ -65,8 +65,13 @@ namespace TerryNovel
 
 			
 			var back = btns.Add.Button( "Back", "back", ()=> this.SetVisible(false) );
-			StartButtton = btns.Add.Button( "Start", "start" );
+			StartButtton = btns.Add.Button( "Start", "start", Start );
 
+		}
+
+		private void Start()
+		{
+			Novel.LoadFrom( Selected.fileSystem, Selected.directory );
 		}
 
 		public void AddCategory(string name)
@@ -77,36 +82,60 @@ namespace TerryNovel
 		public void Update()
 		{
 			List.DeleteChildren( true );
+			StartButtton.SetClass( "disabled",true );
 			AddCategory( "Main" );
-			FindFrom( FileSystem.Mounted, "base_novels/main/" );
+			FindFrom( FileSystem.Mounted, "base_novels/main" );
 			AddCategory( "Bonus" );
-			FindFrom( FileSystem.Mounted, "base_novels/bonus/" );
+			FindFrom( FileSystem.Mounted, "base_novels/bonus" );
 			AddCategory( "Custom" );
-			FindFrom( FileSystem.Data, "novels/" );
+			FindFrom( FileSystem.Data, "novels" );
 
 		}
 
 
 		
 
-		public void FindFrom(BaseFileSystem fileSystem, string dir )
+		public void FindFrom(BaseFileSystem fileSystem, string base_dir )
 		{
-			foreach(var file in Novel.FindAll( fileSystem, dir ) )
+			foreach(var dir in Novel.FindAll( fileSystem, base_dir ) )
 			{
-				if( Novel.ReadInfo( fileSystem, file, out var name, out var desc ) )
+				
+				
+				if( Novel.ReadInfo( fileSystem, dir, out var name, out var desc ) )
 				{
 					var entry = new NovelEntry( fileSystem, dir, name, desc );
+					entry.AddEventListener( "onclick", () =>
+					{
+						Select( entry );
+
+
+					} );
 					List.AddChild( entry );
 				}
 			}
 		}
 
+		private NovelEntry Selected;
 
+
+		private void Select( NovelEntry entry )
+		{
+			Selected?.SetClass( "selected", false );
+			Selected = entry;
+			Selected?.SetClass( "selected", true );
+			StartButtton.SetClass( "disabled", false );
+		}
 
 		public class NovelEntry : Panel
 		{
+			public readonly BaseFileSystem fileSystem;
+			public readonly string directory;
 			public NovelEntry( BaseFileSystem fileSystem, string dir, string name, string desc)
 			{
+				this.fileSystem = fileSystem;
+				directory = dir;
+
+
 				AddClass("entry");
 
 				var pnl = Add.Panel("labels");
@@ -114,13 +143,12 @@ namespace TerryNovel
 				pnl.Add.Label( name, "title");
 				pnl.Add.Label( desc, "desc");
 
-				var f_name = $"{dir}/preview.png";
+				var f_name = $"{dir}preview.png";
 
-				Log.Info( f_name );
 
 				var img_canvas = Add.Panel( "img-canvas" );
 
-				if (fileSystem.FileExists( name ) )
+				if (fileSystem.FileExists( f_name ) )
 				{
 					img_canvas.Add.Image( Novel.LoadTexture( fileSystem, f_name) );
 				}
@@ -132,10 +160,7 @@ namespace TerryNovel
 				
 			}
 
-			protected override void OnClick( MousePanelEvent e )
-			{
-				
-			}
+			
 
 		}
 
