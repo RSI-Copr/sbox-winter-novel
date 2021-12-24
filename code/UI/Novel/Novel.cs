@@ -53,11 +53,18 @@ namespace TerryNovel
 		}
 		public override void OnButtonEvent( ButtonEvent e )
 		{
-			base.OnButtonEvent( e );
+			if(e.Button == "space" && !e.Pressed )
+			{
+				Click();
+
+			}
+			
 			if ( e.Button == "escape" )
 			{
 				Hide();
 			}
+
+			base.OnButtonEvent( e );
 		}
 		public static void EndGameAndWait()
 		{
