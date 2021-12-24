@@ -28,6 +28,7 @@ namespace TerryNovel
 		private static SpritesCanvas Sprites;
 		
 
+
 		public Novel()
 		{
 			RootPanel = this;
@@ -56,7 +57,7 @@ namespace TerryNovel
 			if(e.Button == "space" && !e.Pressed )
 			{
 				Click();
-
+				 
 			}
 			
 			if ( e.Button == "escape" )
@@ -71,6 +72,7 @@ namespace TerryNovel
 			
 			Canvas.SetVisible( false );
 			Ended = true;
+			MainMenu.SetReturnButtonActive( false );
 		}
 
 		public static void HideHudAndWait()
@@ -136,6 +138,7 @@ namespace TerryNovel
 			{
 				RootPanel = new();
 			}
+			MainMenu.SetReturnButtonActive( true );
 			Sprites.Clear();
 			RootPanel.SetVisible( true );
 			Canvas.SetVisible( true );

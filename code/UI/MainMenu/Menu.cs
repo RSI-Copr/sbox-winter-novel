@@ -9,18 +9,31 @@ namespace TerryNovel
 	[UseTemplate]
 	public class MainMenu : Panel
 	{
-
+		private static MainMenu Instance;
 		private NovelCanvas NovelCanvas;
 		public Panel Snow { get; set; }
-
+		public Button ReturnBtn { get; set; }
 		public MainMenu()
 		{
 			NovelCanvas = AddChild<NovelCanvas>();
-
+			Instance = this;
+			ReturnBtn.SetVisible( false );
 		}
-		
+
+		public static void SetReturnButtonActive(bool value )
+		{
+			Instance.ReturnBtn.SetVisible( value );
+		}
+
+		public void ReturnToGame()
+		{
+			Novel.Show();
+		}
+
+
 		public void Startnovel()
 		{
+			
 			NovelCanvas.SetVisible(true);
 			NovelCanvas.Update();
 		}
@@ -42,7 +55,7 @@ namespace TerryNovel
 		public override void Tick()
 		{
 			//Snow.Style.BackgroundPositionX = x_offset;
-			x_offset++;
+			//x_offset++;
 			
 		}
 	}
@@ -71,6 +84,7 @@ namespace TerryNovel
 
 		private void Start()
 		{
+			this.SetVisible( false );
 			Novel.LoadFrom( Selected.fileSystem, Selected.directory );
 		}
 
