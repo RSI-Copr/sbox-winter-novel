@@ -55,6 +55,7 @@ namespace TerryNovel
 
 	public class BackGroundChangeEvent : NovelEvent
 	{
+		public BackGroundChangeEvent() { }
 		public BackGroundChangeEvent( string background )
 		{
 			arguments = new string[]{background};
@@ -67,6 +68,7 @@ namespace TerryNovel
 
 	public class MusicPlayEvent : NovelEvent
 	{
+		public MusicPlayEvent() { }
 		public MusicPlayEvent( string name )
 		{
 			arguments = new string[] { name };
@@ -92,6 +94,7 @@ namespace TerryNovel
 
 	public class MusicStopEvent : NovelEvent
 	{
+
 		public override void Call( params string[] args )
 		{
 			Music.Stop();
@@ -99,6 +102,7 @@ namespace TerryNovel
 	}
 	public class BlackScreenEvent : NovelEvent
 	{
+		public BlackScreenEvent() { }
 		public BlackScreenEvent(bool value)
 		{
 			arguments = new string[] { value.ToString() };
